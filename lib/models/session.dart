@@ -7,6 +7,7 @@ class Session {
   final String exerciseType;
   final int stressBefore;
   final int stressAfter;
+  final int helpfulness;
   final DateTime date;
 
   Session({
@@ -16,6 +17,7 @@ class Session {
     required this.exerciseType,
     required this.stressBefore,
     required this.stressAfter,
+    this.helpfulness = 3,
     required this.date,
   });
 
@@ -30,6 +32,7 @@ class Session {
         'exerciseType': exerciseType,
         'stressBefore': stressBefore,
         'stressAfter': stressAfter,
+        'helpfulness': helpfulness,
         'date': date.toIso8601String(),
       };
 
@@ -40,6 +43,7 @@ class Session {
         exerciseType: map['exerciseType'],
         stressBefore: map['stressBefore'],
         stressAfter: map['stressAfter'],
+        helpfulness: map['helpfulness'] ?? 3,
         date: DateTime.parse(map['date']),
       );
 

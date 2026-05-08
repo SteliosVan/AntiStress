@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../data/exercises.dart';
 import '../data/session_service.dart';
+import '../main.dart';
 import '../models/session.dart';
 import '../theme.dart';
 import '../widgets/stress_slider.dart';
@@ -19,6 +20,7 @@ class PostCheckScreen extends StatefulWidget {
 
 class _PostCheckScreenState extends State<PostCheckScreen> {
   late int _postStress;
+  int _helpfulness = 3;
 
   @override
   void initState() {
@@ -34,16 +36,19 @@ class _PostCheckScreenState extends State<PostCheckScreen> {
       exerciseType: widget.exercise.typeName,
       stressBefore: widget.preStress,
       stressAfter: _postStress,
+      helpfulness: _helpfulness,
       date: DateTime.now(),
     );
     await SessionService.saveSession(session);
+
+    // Trigger immediate refresh of ProgressScreen
+    progressScreenKey.currentState?.reload();
+
     if (mounted) {
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(
-          builder: (_) => ResultScreen(session: session),
-        ),
-        (route) => route.isFirst,
+        MaterialPageRoute(builder: (_) => ResultScreen(session: session)),
+            (route) => route.isFirst,
       );
     }
   }
@@ -53,51 +58,53 @@ class _PostCheckScreenState extends State<PostCheckScreen> {
     return Scaffold(
       backgroundColor: AppTheme.background,
       appBar: AppBar(
-        title: const Text('Αξιολόγηση μετά'),
         automaticallyImplyLeading: false,
+        title: const Text('Αξιολόγηση'),
       ),
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 decoration: BoxDecoration(
-                  color: AppTheme.surface,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppTheme.cardBorder, width: 0.5),
+                  color: widget.exercise.color,
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                padding: const EdgeInsets.all(20),
-                child: Column(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 36,
-                          height: 36,
-                          decoration: BoxDecoration(
-                              color: widget.exercise.color,
-                              shape: BoxShape.circle),
-                          alignment: Alignment.center,
-                          child: Text(widget.exercise.emoji,
-                              style: const TextStyle(fontSize: 18)),
-                        ),
-                        const SizedBox(width: 10),
-                        Text(widget.exercise.name,
-                            style: Theme.of(context).textTheme.titleMedium),
-                      ],
-                    ),
-                    const Divider(height: 28, thickness: 0.5),
-                    StressSlider(
-                      value: _postStress,
-                      onChanged: (v) => setState(() => _postStress = v),
-                      label: 'Επίπεδο άγχους μετά την παρέμβαση:',
-                    ),
+                    Text(widget.exercise.emoji,
+                        style: const TextStyle(fontSize: 18)),
+                    const SizedBox(width: 8),
+                    Text(widget.exercise.name,
+                        style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: widget.exercise.textColor)),
                   ],
                 ),
               ),
+              const SizedBox(height: 20),
+
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: AppTheme.surface,
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: AppTheme.cardBorder, width: 0.5),
+                ),
+                child: StressSlider(
+                  value: _postStress,
+                  onChanged: (v) => setState(() => _postStress = v),
+                  label: 'Επίπεδο άγχους μετά:',
+                ),
+              ),
               const SizedBox(height: 16),
-              // Before/after preview
+
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                 decoration: BoxDecoration(
@@ -107,50 +114,70 @@ class _PostCheckScreenState extends State<PostCheckScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Column(children: [
-                      Text('${widget.preStress}',
-                          style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600,
-                              color: AppTheme.textPrimary)),
-                      Text('Πριν',
-                          style: TextStyle(
-                              fontSize: 12, color: AppTheme.textSecondary)),
-                    ]),
-                    Icon(Icons.arrow_forward,
-                        color: AppTheme.primary, size: 20),
-                    Column(children: [
-                      Text('$_postStress',
-                          style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600,
-                              color: AppTheme.primary)),
-                      Text('Μετά',
-                          style: TextStyle(
-                              fontSize: 12, color: AppTheme.textSecondary)),
-                    ]),
-                    Column(children: [
-                      Text(
-                        widget.preStress - _postStress >= 0
-                            ? '-${widget.preStress - _postStress}'
-                            : '+${_postStress - widget.preStress}',
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w600,
-                            color: widget.preStress - _postStress > 0
-                                ? AppTheme.primary
-                                : widget.preStress - _postStress < 0
-                                    ? const Color(0xFFA32D2D)
-                                    : AppTheme.textSecondary),
-                      ),
-                      Text('Μεταβολή',
-                          style: TextStyle(
-                              fontSize: 12, color: AppTheme.textSecondary)),
-                    ]),
+                    _StatCol(label: 'Πριν', value: '${widget.preStress}', color: AppTheme.textPrimary),
+                    const Icon(Icons.arrow_forward, color: AppTheme.primary, size: 18),
+                    _StatCol(label: 'Μετά', value: '$_postStress', color: AppTheme.primary),
+                    _StatCol(
+                      label: 'Μεταβολή',
+                      value: widget.preStress - _postStress >= 0
+                          ? '-${widget.preStress - _postStress}'
+                          : '+${_postStress - widget.preStress}',
+                      color: widget.preStress - _postStress > 0
+                          ? AppTheme.primary
+                          : const Color(0xFFA32D2D),
+                    ),
                   ],
                 ),
               ),
-              const Spacer(),
+              const SizedBox(height: 20),
+
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: AppTheme.surface,
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: AppTheme.cardBorder, width: 0.5),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Πόσο σε βοήθησε η παρέμβαση;',
+                        style: Theme.of(context).textTheme.titleMedium),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(5, (i) {
+                        return GestureDetector(
+                          onTap: () => setState(() => _helpfulness = i + 1),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 6),
+                            child: Icon(
+                              i < _helpfulness ? Icons.star_rounded : Icons.star_outline_rounded,
+                              size: 40,
+                              color: i < _helpfulness
+                                  ? const Color(0xFFEDAB3A)
+                                  : AppTheme.cardBorder,
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 8),
+                    Center(
+                      child: Text(
+                        _helpLabels[_helpfulness - 1],
+                        style: const TextStyle(
+                            fontSize: 13,
+                            color: AppTheme.textSecondary,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -163,9 +190,8 @@ class _PostCheckScreenState extends State<PostCheckScreen> {
                         borderRadius: BorderRadius.circular(14)),
                     elevation: 0,
                   ),
-                  child: const Text('Αποθήκευση αποτελέσματος',
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+                  child: const Text('Αποθήκευση & Επιστροφή',
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
                 ),
               ),
             ],
@@ -173,5 +199,22 @@ class _PostCheckScreenState extends State<PostCheckScreen> {
         ),
       ),
     );
+  }
+
+  static const _helpLabels = ['Καθόλου', 'Λίγο', 'Μέτρια', 'Αρκετά', 'Πολύ'];
+}
+
+class _StatCol extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+  const _StatCol({required this.label, required this.value, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      Text(value, style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: color)),
+      Text(label, style: const TextStyle(fontSize: 11, color: AppTheme.textTertiary)),
+    ]);
   }
 }

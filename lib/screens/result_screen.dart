@@ -32,12 +32,14 @@ class ResultScreen extends StatelessWidget {
           padding: const EdgeInsets.all(24),
           child: Column(
             children: [
-              const SizedBox(height: 40),
+              const SizedBox(height: 32),
               Container(
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: isPositive ? AppTheme.primaryLight : const Color(0xFFF1EFE8),
+                  color: isPositive
+                      ? AppTheme.primaryLight
+                      : const Color(0xFFF1EFE8),
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,
@@ -54,8 +56,10 @@ class ResultScreen extends StatelessWidget {
               const SizedBox(height: 20),
               Text(
                 isPositive
-                    ? '${reduction > 0 ? "-" : ""}$reduction'
-                    : '${reduction < 0 ? "+" : ""}${reduction.abs()}',
+                    ? '-$reduction'
+                    : reduction < 0
+                        ? '+${reduction.abs()}'
+                        : '0',
                 style: TextStyle(
                     fontSize: 64,
                     fontWeight: FontWeight.w700,
@@ -68,51 +72,67 @@ class ResultScreen extends StatelessWidget {
                       .textTheme
                       .titleLarge
                       ?.copyWith(color: AppTheme.textSecondary)),
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
 
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: AppTheme.surface,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppTheme.cardBorder, width: 0.5),
+                  border:
+                      Border.all(color: AppTheme.cardBorder, width: 0.5),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                child: Column(
                   children: [
-                    _Stat(label: 'Πριν', value: '${session.stressBefore}'),
-                    Container(height: 40, width: 0.5, color: AppTheme.cardBorder),
-                    _Stat(label: 'Μετά', value: '${session.stressAfter}'),
-                    Container(height: 40, width: 0.5, color: AppTheme.cardBorder),
-                    _Stat(label: 'Τύπος', value: session.exerciseType),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _Stat(
+                            label: 'Πριν',
+                            value: '${session.stressBefore}'),
+                        Container(
+                            height: 40,
+                            width: 0.5,
+                            color: AppTheme.cardBorder),
+                        _Stat(
+                            label: 'Μετά',
+                            value: '${session.stressAfter}'),
+                        Container(
+                            height: 40,
+                            width: 0.5,
+                            color: AppTheme.cardBorder),
+                        _Stat(
+                            label: 'Τύπος',
+                            value: session.exerciseType),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    const Divider(height: 1, thickness: 0.5),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('Αξιολόγηση: ',
+                            style: TextStyle(
+                                fontSize: 13,
+                                color: AppTheme.textSecondary)),
+                        ...List.generate(
+                          5,
+                          (i) => Icon(
+                            i < session.helpfulness
+                                ? Icons.star_rounded
+                                : Icons.star_outline_rounded,
+                            size: 22,
+                            color: i < session.helpfulness
+                                ? const Color(0xFFEDAB3A)
+                                : AppTheme.cardBorder,
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
-
-              if (isPositive) ...[
-                const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primaryLight,
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.info_outline,
-                          color: AppTheme.primaryDark, size: 18),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          'Μείωση ${session.reductionPercent.toStringAsFixed(0)}%. Η τακτική άσκηση αυξάνει σταδιακά την αποτελεσματικότητα.',
-                          style: TextStyle(
-                              fontSize: 12, color: AppTheme.primaryDark),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
 
               const Spacer(),
 
@@ -129,19 +149,10 @@ class ResultScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(14)),
                     elevation: 0,
                   ),
-                  child: const Text('Νέα παρέμβαση',
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+                  child: const Text('Επιστροφή στην αρχική',
+                      style: TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.w500)),
                 ),
-              ),
-              const SizedBox(height: 10),
-              TextButton(
-                onPressed: () {
-                  Navigator.popUntil(context, (r) => r.isFirst);
-                },
-                child: Text('Δες στατιστικά →',
-                    style: TextStyle(
-                        color: AppTheme.primary, fontSize: 14)),
               ),
             ],
           ),

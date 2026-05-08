@@ -3,8 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'screens/home_screen.dart';
 import 'screens/progress_screen.dart';
-import 'screens/history_screen.dart';
+import 'screens/settings_screen.dart';
 import 'theme.dart';
+
+final GlobalKey<ProgressScreenState> progressScreenKey =
+GlobalKey<ProgressScreenState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,16 +45,17 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _index = 0;
 
-  final _screens = const [
-    HomeScreen(),
-    ProgressScreen(),
-    HistoryScreen(),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: _index, children: _screens),
+      body: IndexedStack(
+        index: _index,
+        children: [
+          const HomeScreen(),
+          ProgressScreen(key: progressScreenKey),
+          const SettingsScreen(),
+        ],
+      ),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           border: Border(
@@ -62,9 +66,9 @@ class _MainShellState extends State<MainShell> {
           onTap: (i) => setState(() => _index = i),
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.self_improvement_outlined),
-              activeIcon: Icon(Icons.self_improvement),
-              label: 'Παρεμβάσεις',
+              icon: Icon(Icons.home_outlined),
+              activeIcon: Icon(Icons.home),
+              label: 'Αρχική',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.bar_chart_outlined),
@@ -72,9 +76,9 @@ class _MainShellState extends State<MainShell> {
               label: 'Στατιστικά',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.history_outlined),
-              activeIcon: Icon(Icons.history),
-              label: 'Ιστορικό',
+              icon: Icon(Icons.tune_outlined),
+              activeIcon: Icon(Icons.tune),
+              label: 'Ρυθμίσεις',
             ),
           ],
         ),
