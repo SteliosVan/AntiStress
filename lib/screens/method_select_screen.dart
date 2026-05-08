@@ -160,13 +160,6 @@ class _MethodSelectScreenState extends State<MethodSelectScreen> {
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 4),
-                                Text(ex.description,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium),
                                 const SizedBox(height: 6),
                                 Row(
                                   children: [

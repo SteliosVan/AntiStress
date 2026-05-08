@@ -14,19 +14,36 @@ class StressSlider extends StatelessWidget {
   });
 
   String get _desc {
-    if (value <= 2) return 'Πολύ ήρεμο';
-    if (value <= 4) return 'Ελαφρύ άγχος';
-    if (value <= 6) return 'Μέτριο άγχος';
-    if (value <= 8) return 'Αυξημένο άγχος';
-    return 'Πολύ έντονο';
+    switch (value) {
+      case 1: return 'Ηρεμία';
+      case 2: return 'Ήπιο άγχος';
+      case 3: return 'Μέτριο άγχος';
+      case 4: return 'Υψηλό άγχος';
+      case 5: return 'Πολύ υψηλό άγχος';
+      default: return '';
+    }
+  }
+
+  String get _emoji {
+    switch (value) {
+      case 1: return '😊';
+      case 2: return '🙂';
+      case 3: return '😐';
+      case 4: return '😟';
+      case 5: return '😫';
+      default: return '';
+    }
   }
 
   Color get _color {
-    if (value <= 2) return AppTheme.primary;
-    if (value <= 4) return const Color(0xFF5DCAA5);
-    if (value <= 6) return const Color(0xFF888780);
-    if (value <= 8) return const Color(0xFFBA7517);
-    return const Color(0xFFA32D2D);
+    switch (value) {
+      case 1: return const Color(0xFF4CAF50); // Green
+      case 2: return const Color(0xFF8BC34A);
+      case 3: return const Color(0xFFFFC107); // Yellow
+      case 4: return const Color(0xFFFF9800); // Orange
+      case 5: return const Color(0xFFF44336); // Red
+      default: return AppTheme.primary;
+    }
   }
 
   @override
@@ -41,13 +58,21 @@ class StressSlider extends StatelessWidget {
                 ?.copyWith(color: AppTheme.textSecondary)),
         const SizedBox(height: 16),
         Center(
-          child: Text(
-            '$value',
-            style: TextStyle(
-                fontSize: 52,
-                fontWeight: FontWeight.w600,
-                color: _color,
-                height: 1),
+          child: Column(
+            children: [
+              Text(
+                _emoji,
+                style: const TextStyle(fontSize: 48),
+              ),
+              Text(
+                '$value',
+                style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w600,
+                    color: _color,
+                    height: 1),
+              ),
+            ],
           ),
         ),
         Center(
@@ -66,8 +91,8 @@ class StressSlider extends StatelessWidget {
           ),
           child: Slider(
             min: 1,
-            max: 10,
-            divisions: 9,
+            max: 5,
+            divisions: 4,
             value: value.toDouble(),
             onChanged: (v) => onChanged(v.round()),
           ),
@@ -75,11 +100,11 @@ class StressSlider extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('1 Ήρεμο',
+            Text('1 Ηρεμία',
                 style: Theme.of(context).textTheme.labelSmall),
-            Text('5 Μέτριο',
+            Text('3 Μέτριο',
                 style: Theme.of(context).textTheme.labelSmall),
-            Text('10 Έντονο',
+            Text('5 Πολύ υψηλό',
                 style: Theme.of(context).textTheme.labelSmall),
           ],
         ),

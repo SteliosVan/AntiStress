@@ -188,11 +188,13 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                           style: Theme.of(context).textTheme.bodyLarge),
                       const SizedBox(height: 28),
 
-                      if (step.hasBreathAnimation)
+                      if (step.hasBreathAnimation) ...[
                         BreathAnimationWidget(
                           exerciseId: widget.exercise.id,
+                          maxCycles: (_durationMinutes * 6).ceil(),
                           onComplete: () {},
                         ),
+                      ],
 
                       if (step.hasInput) ...[
                         TextField(
