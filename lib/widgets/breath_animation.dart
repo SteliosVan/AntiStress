@@ -4,11 +4,13 @@ import '../theme.dart';
 
 class BreathAnimationWidget extends StatefulWidget {
   final String exerciseId;
+  final int maxCycles;
   final VoidCallback? onComplete;
 
   const BreathAnimationWidget({
     super.key,
     required this.exerciseId,
+    required this.maxCycles,
     this.onComplete,
   });
 
@@ -20,20 +22,20 @@ class _BreathAnimationWidgetState extends State<BreathAnimationWidget>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnim;
+  Timer? _phaseTimer;
+  Timer? _updateTimer;
 
   int _phaseIndex = 0;
   int _cycle = 0;
-  int _countdown = 0;
-  Timer? _timer;
+  double _phaseProgress = 0.0; // 0.0 to 1.0 for smooth animation
   bool _running = false;
   bool _completed = false;
 
   List<_Phase> get _phases {
     if (widget.exerciseId == '478') {
       return [
-        _Phase('Εισπνοή', 4, AppTheme.primary, 1.35),
-        _Phase('Κράτα', 7, AppTheme.breathBlue, 1.35),
-        _Phase('Εκπνοή', 8, AppTheme.breathOrange, 1.0),
+        _Phase('Εισπνοή', 5, Colors.green, 1.35),
+        _Phase('Εκπνοή', 5, Colors.red, 1.0),
       ];
     } else {
       return [
@@ -45,14 +47,14 @@ class _BreathAnimationWidgetState extends State<BreathAnimationWidget>
     }
   }
 
-  int get _maxCycles => widget.exerciseId == '478' ? 4 : 5;
+  int get _maxCycles => widget.maxCycles;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 800));
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 100));
     _scaleAnim = Tween<double>(begin: 1.0, end: 1.0).animate(
-        CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+        CurvedAnimation(parent: _controller, curve: Curves.linear));
   }
 
   void _start() {
@@ -72,37 +74,53 @@ class _BreathAnimationWidgetState extends State<BreathAnimationWidget>
       widget.onComplete?.call();
       return;
     }
+    
     final phase = _phases[_phaseIndex];
-    setState(() { _countdown = phase.duration; });
-
-    _scaleAnim = Tween<double>(begin: _scaleAnim.value, end: phase.scale)
-        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    final phaseDurationMs = phase.duration * 1000;
+    
+    // Smooth animation: scale increases during inhale, decreases during exhale
+    final previousScale = _phaseIndex == 0 ? 1.0 : 1.35; // Start from where we are
+    final targetScale = _phaseIndex == 0 ? 1.35 : 1.0;
+    _scaleAnim = Tween<double>(begin: previousScale, end: targetScale).animate(
+        CurvedAnimation(parent: _controller, curve: Curves.linear));
+    
+    _controller.duration = Duration(milliseconds: phaseDurationMs.toInt());
     _controller.forward(from: 0);
-
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (t) {
+    
+    // Update progress every 50ms for smooth visualization
+    _phaseTimer?.cancel();
+    _updateTimer?.cancel();
+    
+    _updateTimer = Timer.periodic(const Duration(milliseconds: 50), (t) {
       if (!mounted) { t.cancel(); return; }
-      setState(() { _countdown--; });
-      if (_countdown <= 0) {
-        t.cancel();
-        _phaseIndex++;
-        if (_phaseIndex >= _phases.length) {
-          _phaseIndex = 0;
-          _cycle++;
-        }
-        _runPhase();
+      setState(() {
+        _phaseProgress = _controller.value;
+      });
+    });
+    
+    _phaseTimer = Timer(Duration(milliseconds: phaseDurationMs.toInt()), () {
+      if (!mounted) return;
+      _updateTimer?.cancel();
+      _phaseIndex++;
+      if (_phaseIndex >= _phases.length) {
+        _phaseIndex = 0;
+        _cycle++;
       }
+      _runPhase();
     });
   }
 
   void _stop() {
-    _timer?.cancel();
+    _phaseTimer?.cancel();
+    _updateTimer?.cancel();
+    _controller.stop();
     setState(() { _running = false; });
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
+    _phaseTimer?.cancel();
+    _updateTimer?.cancel();
     _controller.dispose();
     super.dispose();
   }
@@ -135,7 +153,7 @@ class _BreathAnimationWidgetState extends State<BreathAnimationWidget>
               ),
               alignment: Alignment.center,
               child: Text(
-                _completed ? '✓' : (phase?.label ?? 'Έτοιμος'),
+                _completed ? '✓' : (phase?.label ?? ''),
                 style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
@@ -147,7 +165,7 @@ class _BreathAnimationWidgetState extends State<BreathAnimationWidget>
         const SizedBox(height: 20),
         if (_running && !_completed) ...[
           Text(
-            '$_countdown',
+            '${(5 - (_phaseProgress * 5)).toStringAsFixed(1)}',
             style: const TextStyle(
                 fontSize: 36, fontWeight: FontWeight.w600, color: AppTheme.textPrimary),
           ),
@@ -165,9 +183,6 @@ class _BreathAnimationWidgetState extends State<BreathAnimationWidget>
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
                   color: AppTheme.primary)),
-        ] else ...[
-          const Text('Πάτα Έναρξη',
-              style: TextStyle(fontSize: 15, color: AppTheme.textSecondary)),
         ],
         const SizedBox(height: 20),
         if (!_running && !_completed)
@@ -186,12 +201,6 @@ class _BreathAnimationWidgetState extends State<BreathAnimationWidget>
               child: const Text('▶  Έναρξη',
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
             ),
-          )
-        else if (_running)
-          TextButton(
-            onPressed: _stop,
-            child: Text('Διακοπή',
-                style: TextStyle(color: AppTheme.textSecondary, fontSize: 13)),
           ),
       ],
     );

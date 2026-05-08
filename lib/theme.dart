@@ -49,7 +49,7 @@ class AppTheme {
           titleTextStyle: GoogleFonts.notoSans(
               fontSize: 18, fontWeight: FontWeight.w500, color: textPrimary),
         ),
-        cardTheme: const CardTheme(
+        cardTheme: const CardThemeData(
           color: surface,
           elevation: 0,
           shape: RoundedRectangleBorder(
