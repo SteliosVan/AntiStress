@@ -239,15 +239,15 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
 
             // Bottom button:
             // First step → "Έναρξη"
-            // Middle steps → no button (user uses ✓ to complete)
+            // Middle steps → "Επόμενο"
             // Last step → "Ολοκλήρωση & Αξιολόγηση"
-            if (isFirst || isLast)
+            if (isFirst || !isLast || isLast)
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                 child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: isFirst ? _next : _completeSession,
+                    onPressed: !isLast ? _next : _completeSession,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.primary,
                       foregroundColor: Colors.white,
@@ -257,7 +257,11 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                       elevation: 0,
                     ),
                     child: Text(
-                      isFirst ? 'Έναρξη →' : 'Ολοκλήρωση & Αξιολόγηση →',
+                      isFirst
+                          ? 'Έναρξη →'
+                          : !isLast
+                              ? 'Επόμενο →'
+                              : 'Ολοκλήρωση & Αξιολόγηση →',
                       style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w500),
                     ),

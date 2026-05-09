@@ -264,7 +264,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     return Column(
                       children: [
                         InkWell(
-                          onTap: () => _showDurationPicker(ex),
+                          onTap: ex.id == 'cbt' || ex.id == 'grounding' ? null : () => _showDurationPicker(ex),
                           borderRadius: i == 0
                               ? const BorderRadius.vertical(
                               top: Radius.circular(18))
@@ -332,22 +332,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                                       : AppTheme.textTertiary),
                                             ),
                                           ),
-                                          const SizedBox(width: 8),
-                                          Icon(Icons.timer_outlined,
-                                              size: 11,
-                                              color: enabled
-                                                  ? AppTheme.primary
-                                                  : AppTheme.textTertiary),
-                                          const SizedBox(width: 3),
-                                          Text(
-                                            '${duration.toInt()} λεπτά',
-                                            style: TextStyle(
-                                                fontSize: 11,
+                                          if (ex.id != 'cbt' && ex.id != 'grounding') ...[
+                                            const SizedBox(width: 8),
+                                            Icon(Icons.timer_outlined,
+                                                size: 11,
                                                 color: enabled
                                                     ? AppTheme.primary
-                                                    : AppTheme.textTertiary,
-                                                fontWeight: FontWeight.w500),
-                                          ),
+                                                    : AppTheme.textTertiary),
+                                            const SizedBox(width: 3),
+                                            Text(
+                                              '${duration.toInt()} λεπτά',
+                                              style: TextStyle(
+                                                  fontSize: 11,
+                                                  color: enabled
+                                                      ? AppTheme.primary
+                                                      : AppTheme.textTertiary,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ],
                                         ],
                                       ),
                                     ],

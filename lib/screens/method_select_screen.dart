@@ -161,19 +161,20 @@ class _MethodSelectScreenState extends State<MethodSelectScreen> {
                                   ],
                                 ),
                                 const SizedBox(height: 6),
-                                Row(
-                                  children: [
-                                    Icon(Icons.timer_outlined,
-                                        size: 13,
-                                        color: AppTheme.primary),
-                                    const SizedBox(width: 4),
-                                    Text('${duration.toInt()} λεπτά',
-                                        style: TextStyle(
-                                            fontSize: 11,
-                                            color: AppTheme.primary,
-                                            fontWeight: FontWeight.w500)),
-                                  ],
-                                ),
+                                if (ex.id != 'cbt' && ex.id != 'grounding')
+                                  Row(
+                                    children: [
+                                      Icon(Icons.timer_outlined,
+                                          size: 13,
+                                          color: AppTheme.primary),
+                                      const SizedBox(width: 4),
+                                      Text('${duration.toInt()} λεπτά',
+                                          style: TextStyle(
+                                              fontSize: 11,
+                                              color: AppTheme.primary,
+                                              fontWeight: FontWeight.w500)),
+                                    ],
+                                  ),
                               ],
                             ),
                           ),
