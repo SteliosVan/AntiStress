@@ -15,11 +15,11 @@ class StressSlider extends StatelessWidget {
 
   String get _desc {
     switch (value) {
-      case 1: return 'Ηρεμία';
-      case 2: return 'Ήπιο άγχος';
-      case 3: return 'Μέτριο άγχος';
-      case 4: return 'Υψηλό άγχος';
-      case 5: return 'Πολύ υψηλό άγχος';
+      case 1: return 'Calm';
+      case 2: return 'Mild stress';
+      case 3: return 'Moderate stress';
+      case 4: return 'High stress';
+      case 5: return 'Very high stress';
       default: return '';
     }
   }
@@ -100,11 +100,11 @@ class StressSlider extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('1 Ηρεμία',
+            Text('1 Calm',
                 style: Theme.of(context).textTheme.labelSmall),
-            Text('3 Μέτριο',
+            Text('3 Moderate',
                 style: Theme.of(context).textTheme.labelSmall),
-            Text('5 Πολύ υψηλό',
+            Text('5 Very high',
                 style: Theme.of(context).textTheme.labelSmall),
           ],
         ),

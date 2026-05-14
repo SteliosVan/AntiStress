@@ -68,17 +68,17 @@ class _MainShellState extends State<MainShell> {
             BottomNavigationBarItem(
               icon: Icon(Icons.home_outlined),
               activeIcon: Icon(Icons.home),
-              label: 'Αρχική',
+              label: 'Home',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.bar_chart_outlined),
               activeIcon: Icon(Icons.bar_chart),
-              label: 'Στατιστικά',
+              label: 'Stats',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.tune_outlined),
               activeIcon: Icon(Icons.tune),
-              label: 'Ρυθμίσεις',
+              label: 'Settings',
             ),
           ],
         ),

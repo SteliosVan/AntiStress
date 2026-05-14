@@ -28,7 +28,7 @@ class HomeScreen extends StatelessWidget {
                   style: Theme.of(context).textTheme.displayLarge),
               const SizedBox(height: 4),
               Text(
-                'Μικρές παρεμβάσεις για μείωση άγχους',
+                'Small interventions to reduce stress',
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               const Spacer(),
@@ -69,7 +69,7 @@ class HomeScreen extends StatelessWidget {
               const Spacer(),
               Center(
                 child: Text(
-                  'Πάτα START για να ξεκινήσεις μια νέα συνεδρία',
+                  'Press START to begin a new session',
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium
@@ -87,8 +87,8 @@ class HomeScreen extends StatelessWidget {
 
   String _greeting() {
     final h = DateTime.now().hour;
-    if (h < 12) return 'ΚΑΛΗΜΕΡΑ';
-    if (h < 18) return 'ΚΑΛΟ ΑΠΟΓΕΥΜΑ';
-    return 'ΚΑΛΗΣΠΕΡΑ';
+    if (h < 12) return 'GOOD MORNING';
+    if (h < 18) return 'GOOD AFTERNOON';
+    return 'GOOD EVENING';
   }
 }

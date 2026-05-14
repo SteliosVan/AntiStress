@@ -81,7 +81,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
         leading: IconButton(
           icon: const Icon(Icons.close, size: 24),
           color: const Color(0xFFA32D2D),
-          tooltip: 'Ακύρωση',
+          tooltip: 'Cancel',
           onPressed: _cancelSession,
         ),
         title: Column(
@@ -90,7 +90,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
             Text(widget.exercise.name,
                 style: const TextStyle(fontSize: 15)),
             if (_durationMinutes > 0)
-              Text('$_durationMinutes λεπτά',
+              Text('$_durationMinutes min',
                   style: const TextStyle(
                       fontSize: 11, color: AppTheme.textTertiary)),
           ],
@@ -99,7 +99,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
           IconButton(
             icon: const Icon(Icons.check_circle_outline, size: 26),
             color: AppTheme.primary,
-            tooltip: 'Ολοκλήρωση & Αξιολόγηση',
+            tooltip: 'Complete & review',
             onPressed: _completeSession,
           ),
           const SizedBox(width: 4),
@@ -167,7 +167,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                               const Icon(Icons.timer_outlined,
                                   size: 14, color: AppTheme.primaryDark),
                               const SizedBox(width: 6),
-                              Text('Διάρκεια: $_durationMinutes λεπτά',
+                              Text('Duration: $_durationMinutes min',
                                   style: const TextStyle(
                                       fontSize: 12,
                                       color: AppTheme.primaryDark,
@@ -249,9 +249,9 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
             ),
 
             // Bottom button:
-            // First step → "Έναρξη"
+            // First step → "Start"
             // Middle steps → no button (user uses ✓ to complete)
-            // Last step → "Ολοκλήρωση & Αξιολόγηση"
+            // Last step → "Complete & review"
             if (isFirst || isLast)
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
@@ -268,7 +268,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                       elevation: 0,
                     ),
                     child: Text(
-                      isFirst ? 'Έναρξη →' : 'Ολοκλήρωση & Αξιολόγηση →',
+                      isFirst ? 'Start →' : 'Complete & Review →',
                       style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w500),
                     ),

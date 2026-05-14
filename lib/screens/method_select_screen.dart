@@ -63,7 +63,7 @@ class _MethodSelectScreenState extends State<MethodSelectScreen> {
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('Επέλεξε μέθοδο'),
+        title: const Text('Choose a method'),
       ),
       body: SafeArea(
         child: Column(
@@ -72,7 +72,7 @@ class _MethodSelectScreenState extends State<MethodSelectScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
               child: Text(
-                'Ποια μέθοδο θέλεις να ακολουθήσεις;',
+                'Which method do you want to follow?',
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
             ),
@@ -84,11 +84,11 @@ class _MethodSelectScreenState extends State<MethodSelectScreen> {
                   children: [
                     Icon(Icons.tune, size: 48, color: AppTheme.textTertiary),
                     const SizedBox(height: 12),
-                    Text('Καμία μέθοδος ενεργοποιημένη',
+                    Text('No methods enabled',
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(color: AppTheme.textSecondary)),
                     const SizedBox(height: 6),
-                    Text('Πήγαινε στις Ρυθμίσεις',
+                    Text('Go to Settings',
                         style: Theme.of(context).textTheme.bodyMedium),
                   ],
                 ),
@@ -167,7 +167,7 @@ class _MethodSelectScreenState extends State<MethodSelectScreen> {
                                         size: 13,
                                         color: AppTheme.primary),
                                     const SizedBox(width: 4),
-                                    Text('${duration.toInt()} λεπτά',
+                                    Text('${duration.toInt()} min',
                                         style: TextStyle(
                                             fontSize: 11,
                                             color: AppTheme.primary,

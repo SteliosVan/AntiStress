@@ -98,7 +98,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     children: [
                       Text(ex.name,
                           style: Theme.of(ctx).textTheme.titleMedium),
-                      Text('Ρύθμιση διάρκειας',
+                      Text('Duration setting',
                           style: Theme.of(ctx).textTheme.bodyMedium),
                     ],
                   ),
@@ -107,7 +107,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 28),
               Center(
                 child: Text(
-                  '${tempDuration.toInt()} λεπτά',
+                  '${tempDuration.toInt()} min',
                   style: const TextStyle(
                       fontSize: 48,
                       fontWeight: FontWeight.w700,
@@ -137,9 +137,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('2 λεπτά',
+                  Text('2 min',
                       style: Theme.of(ctx).textTheme.labelSmall),
-                  Text('10 λεπτά',
+                  Text('10 min',
                       style: Theme.of(ctx).textTheme.labelSmall),
                 ],
               ),
@@ -154,7 +154,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                            '${ex.name}: ${tempDuration.toInt()} λεπτά'),
+                            '${ex.name}: ${tempDuration.toInt()} min'),
                         backgroundColor: AppTheme.primary,
                         behavior: SnackBarBehavior.floating,
                         shape: RoundedRectangleBorder(
@@ -170,7 +170,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         borderRadius: BorderRadius.circular(12)),
                     elevation: 0,
                   ),
-                  child: const Text('Αποθήκευση',
+                  child: const Text('Save',
                       style: TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w500)),
                 ),
@@ -215,10 +215,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 8),
-              Text('Ρυθμίσεις',
+              Text('Settings',
                   style: Theme.of(context).textTheme.headlineMedium),
               const SizedBox(height: 4),
-              Text('Ενεργοποίησε μεθόδους και ρύθμισε τη διάρκειά τους',
+              Text('Enable methods and set their duration',
                   style: Theme.of(context).textTheme.bodyMedium),
               const SizedBox(height: 12),
               Container(
@@ -234,7 +234,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     const SizedBox(width: 8),
                     const Expanded(
                       child: Text(
-                        'Πάτα πάνω σε μια μέθοδο για να ρυθμίσεις τη διάρκειά της',
+                        'Tap a method to set its duration',
                         style: TextStyle(
                             fontSize: 12, color: AppTheme.primaryDark),
                       ),
@@ -243,7 +243,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              Text('ΜΕΘΟΔΟΙ',
+              Text('METHODS',
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       letterSpacing: 0.8, fontWeight: FontWeight.w600)),
               const SizedBox(height: 10),
@@ -340,7 +340,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                                   : AppTheme.textTertiary),
                                           const SizedBox(width: 3),
                                           Text(
-                                            '${duration.toInt()} λεπτά',
+                                            '${duration.toInt()} min',
                                             style: TextStyle(
                                                 fontSize: 11,
                                                 color: enabled
