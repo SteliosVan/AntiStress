@@ -77,7 +77,7 @@ final List<Exercise> exercises = [
       ),
       ExerciseStep(
         title: 'Ακολούθησε τον ρυθμό',
-        body: 'Εισπνοή 5 δευτ. -> εκπνοή 5 δευτ.',
+        body: 'Εισπνοή 5 δευτ. → εκπνοή 5 δευτ.',
         hasBreathAnimation: true,
         breathDurationSeconds: 10,
       ),
@@ -102,13 +102,12 @@ final List<Exercise> exercises = [
     steps: const [
       ExerciseStep(
         title: 'Προετοιμασία',
-        body:
-            'Φαντάσου ένα τετράγωνο. Κάθε πλευρά αντιστοιχεί σε 4 δευτερόλεπτα. Θα κάνουμε 5 κύκλους.',
+        body: 'Κάθισε αναπαυτικά με την πλάτη ίσια. Χαλάρωσε τους ώμους σου.',
       ),
       ExerciseStep(
-        title: 'Box Breathing',
+        title: 'Ακολούθησε τον ρυθμό',
         body:
-            'Εισπνοή 4 → Κράτα 4 → Εκπνοή 4 → Κράτα 4. Ισόχρονος ρυθμός.',
+            'Εισπνοή 4 δευτ. → Κράτα 4 δευτ. → Εκπνοή 4 δευτ. → Κράτα 4 δευτ.',
         hasBreathAnimation: true,
         breathDurationSeconds: 16,
       ),

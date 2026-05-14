@@ -51,6 +51,14 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     );
   }
 
+  int _computedCyclesForStep(int durationMinutes, int? breathDurationSeconds) {
+    if (durationMinutes <= 0 || breathDurationSeconds == null || breathDurationSeconds <= 0) {
+      return 0;
+    }
+    final totalSeconds = durationMinutes * 60;
+    return (totalSeconds / breathDurationSeconds).ceil();
+  }
+
   void _next() {
     if (_step < widget.exercise.steps.length - 1) {
       setState(() => _step++);
@@ -191,7 +199,10 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                       if (step.hasBreathAnimation) ...[
                         BreathAnimationWidget(
                           exerciseId: widget.exercise.id,
-                          maxCycles: (_durationMinutes * 6).ceil(),
+                          maxCycles: _computedCyclesForStep(
+                            _durationMinutes,
+                            step.breathDurationSeconds,
+                          ),
                           onComplete: () {},
                         ),
                       ],
