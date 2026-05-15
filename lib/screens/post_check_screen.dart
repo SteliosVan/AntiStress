@@ -39,17 +39,26 @@ class _PostCheckScreenState extends State<PostCheckScreen> {
       helpfulness: _helpfulness,
       date: DateTime.now(),
     );
-    await SessionService.saveSession(session);
 
-    // Trigger immediate refresh of ProgressScreen
-    progressScreenKey.currentState?.reload();
+    try {
+      await SessionService.saveSession(session);
+      progressScreenKey.currentState?.reload();
 
-    if (mounted) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => ResultScreen(session: session)),
-            (route) => route.isFirst,
-      );
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => ResultScreen(session: session)),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Σφάλμα αποθήκευσης: $e'),
+            backgroundColor: const Color(0xFFA32D2D),
+          ),
+        );
+      }
     }
   }
 

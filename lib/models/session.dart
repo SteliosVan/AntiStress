@@ -37,17 +37,18 @@ class Session {
       };
 
   factory Session.fromMap(Map<String, dynamic> map) => Session(
-        id: map['id'],
-        exerciseId: map['exerciseId'],
-        exerciseName: map['exerciseName'],
-        exerciseType: map['exerciseType'],
-        stressBefore: map['stressBefore'],
-        stressAfter: map['stressAfter'],
+        id: map['id'] ?? 0,
+        exerciseId: map['exerciseId'] ?? '',
+        exerciseName: map['exerciseName'] ?? '',
+        exerciseType: map['exerciseType'] ?? '',
+        stressBefore: map['stressBefore'] ?? 0,
+        stressAfter: map['stressAfter'] ?? 0,
         helpfulness: map['helpfulness'] ?? 3,
-        date: DateTime.parse(map['date']),
+        date: map['date'] != null ? DateTime.tryParse(map['date']) ?? DateTime.now() : DateTime.now(),
       );
 
   String toJson() => json.encode(toMap());
+
   factory Session.fromJson(String source) =>
-      Session.fromMap(json.decode(source));
+      Session.fromMap(json.decode(source) as Map<String, dynamic>);
 }
