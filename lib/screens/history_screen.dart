@@ -55,9 +55,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Ιστορικό συνεδριών',
+                      Text('Session History',
                           style: Theme.of(context).textTheme.headlineMedium),
-                      Text('${_sessions.length} συνεδρίες',
+                      Text('${_sessions.length} sessions',
                           style: Theme.of(context).textTheme.bodyMedium),
                     ],
                   ),
@@ -72,7 +72,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         Icon(Icons.history,
                             size: 48, color: AppTheme.textTertiary),
                         const SizedBox(height: 12),
-                        Text('Καμία συνεδρία ακόμα',
+                        Text('No sessions yet',
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium
@@ -112,7 +112,7 @@ class _SessionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fmt = DateFormat('dd MMM yyyy, HH:mm', 'el');
+    final fmt = DateFormat('dd MMM yyyy, HH:mm', 'en');
     final diff = session.reduction;
     final sign = diff > 0 ? '-' : diff < 0 ? '+' : '';
 

@@ -70,10 +70,10 @@ class ProgressScreenState extends State<ProgressScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 8),
-                Text('Στατιστικά',
+                Text('Statistics',
                     style: Theme.of(context).textTheme.headlineMedium),
                 const SizedBox(height: 4),
-                Text('${_sessions.length} συνεδρίες καταγεγραμμένες',
+                Text('${_sessions.length} recorded session(s)',
                     style: Theme.of(context).textTheme.bodyMedium),
                 const SizedBox(height: 20),
 
@@ -88,17 +88,17 @@ class ProgressScreenState extends State<ProgressScreen> {
                     mainAxisSpacing: 10,
                     childAspectRatio: 1.6,
                     children: [
-                      _MetricCard(label: 'Συνεδρίες', value: '${_sessions.length}', icon: Icons.self_improvement),
+                      _MetricCard(label: 'Session(s)', value: '${_sessions.length}', icon: Icons.self_improvement),
                       _MetricCard(
-                          label: 'Μέση μείωση',
+                          label: 'Average stress level reduction',
                           value: _avgReduction >= 0
                               ? '-${_avgReduction.toStringAsFixed(1)}'
                               : '+${(-_avgReduction).toStringAsFixed(1)}',
                           valueColor: _avgReduction >= 0 ? AppTheme.primary : const Color(0xFFA32D2D),
                           icon: Icons.trending_down),
-                      _MetricCard(label: 'Μέσο πριν', value: _avgBefore.toStringAsFixed(1), icon: Icons.mood_bad),
+                      _MetricCard(label: 'Average  stress level before intervention', value: _avgBefore.toStringAsFixed(1), icon: Icons.mood_bad),
                       _MetricCard(
-                          label: 'Μέση αξιολόγηση',
+                          label: 'Average rating',
                           value: '${_avgHelpfulness.toStringAsFixed(1)} ⭐',
                           valueColor: const Color(0xFFEDAB3A),
                           icon: Icons.star_outline),
@@ -106,12 +106,12 @@ class ProgressScreenState extends State<ProgressScreen> {
                   ),
                   const SizedBox(height: 24),
 
-                  _SectionTitle('Εξέλιξη άγχους ανά συνεδρία'),
+                  _SectionTitle('Stress trend by session'),
                   const SizedBox(height: 8),
                   Row(children: [
-                    _LegendDot(AppTheme.primary, 'Πριν'),
+                    _LegendDot(AppTheme.primary, 'Before'),
                     const SizedBox(width: 16),
-                    _LegendDot(const Color(0xFF378ADD), 'Μετά'),
+                    _LegendDot(const Color(0xFF378ADD), 'After'),
                   ]),
                   const SizedBox(height: 8),
                   Container(
@@ -122,7 +122,7 @@ class ProgressScreenState extends State<ProgressScreen> {
                   const SizedBox(height: 24),
 
                   if (_byType.isNotEmpty) ...[
-                    _SectionTitle('Αποτελεσματικότητα ανά τύπο'),
+                    _SectionTitle('Effectiveness by type'),
                     const SizedBox(height: 12),
                     Container(
                       height: 180,
@@ -159,7 +159,7 @@ class ProgressScreenState extends State<ProgressScreen> {
         )),
         bottomTitles: AxisTitles(sideTitles: SideTitles(
           showTitles: true, reservedSize: 22,
-          getTitlesWidget: (v, _) => Text('Σ${v.toInt() + 1}',
+          getTitlesWidget: (v, _) => Text('S${v.toInt() + 1}',
               style: const TextStyle(fontSize: 10, color: AppTheme.textTertiary)),
         )),
         rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -188,9 +188,9 @@ class ProgressScreenState extends State<ProgressScreen> {
   BarChartData _typeData() {
     final types = _byType.keys.toList();
     final colors = {
-      'Αναπνοή': AppTheme.primary,
+      'Breathing': AppTheme.primary,
       'CBT': const Color(0xFF378ADD),
-      'Χαλάρωση': const Color(0xFFBA7517),
+      'Relaxation': const Color(0xFFBA7517),
     };
 
     return BarChartData(
@@ -291,10 +291,10 @@ class _EmptyState extends StatelessWidget {
       child: Column(children: [
         Icon(Icons.bar_chart_outlined, size: 48, color: AppTheme.textTertiary),
         const SizedBox(height: 12),
-        Text('Καμία συνεδρία ακόμα',
+        Text('No sessions yet',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(color: AppTheme.textSecondary)),
         const SizedBox(height: 6),
-        Text('Κάνε την πρώτη σου παρέμβαση!',
+        Text('Make your first intervention!',
             style: Theme.of(context).textTheme.bodyMedium),
       ]),
     ),

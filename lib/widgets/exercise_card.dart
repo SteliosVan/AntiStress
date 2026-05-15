@@ -83,7 +83,7 @@ class ExerciseCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    '${exercise.tagline} · ${exercise.durationMinutes} λεπτά',
+                    '${exercise.tagline} · ${exercise.durationMinutes} min',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],

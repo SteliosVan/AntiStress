@@ -34,15 +34,15 @@ class _BreathAnimationWidgetState extends State<BreathAnimationWidget>
   List<_Phase> get _phases {
     if (widget.exerciseId == '478') {
       return [
-        _Phase('Εισπνοή', 5, Colors.green, 1.35),
-        _Phase('Εκπνοή', 5, Colors.red, 1.0),
+        _Phase('Inhale', 5, Colors.green, 1.35),
+        _Phase('Exhale', 5, Colors.red, 1.0),
       ];
     } else {
       return [
-        _Phase('Εισπνοή', 4, AppTheme.primary, 1.3),
-        _Phase('Κράτα', 4, AppTheme.breathBlue, 1.3),
-        _Phase('Εκπνοή', 4, AppTheme.breathOrange, 1.0),
-        _Phase('Κράτα', 4, AppTheme.breathAmber, 1.0),
+        _Phase('Inhale', 4, AppTheme.primary, 1.3),
+        _Phase('Hold', 4, AppTheme.breathBlue, 1.3),
+        _Phase('Exhale', 4, AppTheme.breathOrange, 1.0),
+        _Phase('Hold', 4, AppTheme.breathAmber, 1.0),
       ];
     }
   }
@@ -193,16 +193,16 @@ class _BreathAnimationWidgetState extends State<BreathAnimationWidget>
             style: const TextStyle(
                 fontSize: 36, fontWeight: FontWeight.w600, color: AppTheme.textPrimary),
           ),
-          Text('δευτερόλεπτα',
+          Text('seconds',
               style: Theme.of(context).textTheme.bodyMedium),
           const SizedBox(height: 6),
-          Text('Κύκλος ${_cycle + 1} / $_maxCycles',
+          Text('Cycle ${_cycle + 1} / $_maxCycles',
               style: Theme.of(context)
                   .textTheme
                   .labelSmall
                   ?.copyWith(color: AppTheme.textTertiary)),
         ] else if (_completed) ...[
-          const Text('Ολοκληρώθηκε!',
+          const Text('Completed!',
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
@@ -222,7 +222,7 @@ class _BreathAnimationWidgetState extends State<BreathAnimationWidget>
                     borderRadius: BorderRadius.circular(12)),
                 elevation: 0,
               ),
-              child: const Text('▶  Έναρξη',
+              child: const Text('▶  Start',
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
             ),
           ),
