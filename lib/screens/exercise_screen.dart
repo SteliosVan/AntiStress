@@ -73,7 +73,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     final step = steps[_step];
     final isLast = _step == steps.length - 1;
     final isFirst = _step == 0;
-    final isStepExercise = widget.exercise.id == 'cbt' || widget.exercise.id == 'grounding';
+    final isStepExercise = widget.exercise.id == 'cbt' || widget.exercise.id == 'grounding' || widget.exercise.id == 'pmt';
 
     return Scaffold(
       backgroundColor: AppTheme.background,
