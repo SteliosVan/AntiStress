@@ -73,6 +73,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     final step = steps[_step];
     final isLast = _step == steps.length - 1;
     final isFirst = _step == 0;
+    final isStepExercise = widget.exercise.id == 'cbt' || widget.exercise.id == 'grounding';
 
     return Scaffold(
       backgroundColor: AppTheme.background,
@@ -81,7 +82,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
         leading: IconButton(
           icon: const Icon(Icons.close, size: 24),
           color: const Color(0xFFA32D2D),
-          tooltip: 'Ακύρωση',
+          tooltip: 'Cancel',
           onPressed: _cancelSession,
         ),
         title: Column(
@@ -90,7 +91,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
             Text(widget.exercise.name,
                 style: const TextStyle(fontSize: 15)),
             if (_durationMinutes > 0)
-              Text('$_durationMinutes λεπτά',
+              Text('$_durationMinutes min',
                   style: const TextStyle(
                       fontSize: 11, color: AppTheme.textTertiary)),
           ],
@@ -99,7 +100,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
           IconButton(
             icon: const Icon(Icons.check_circle_outline, size: 26),
             color: AppTheme.primary,
-            tooltip: 'Ολοκλήρωση & Αξιολόγηση',
+            tooltip: 'Complete & review',
             onPressed: _completeSession,
           ),
           const SizedBox(width: 4),
@@ -167,7 +168,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                               const Icon(Icons.timer_outlined,
                                   size: 14, color: AppTheme.primaryDark),
                               const SizedBox(width: 6),
-                              Text('Διάρκεια: $_durationMinutes λεπτά',
+                              Text('Duration: $_durationMinutes min',
                                   style: const TextStyle(
                                       fontSize: 12,
                                       color: AppTheme.primaryDark,
@@ -249,10 +250,10 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
             ),
 
             // Bottom button:
-            // First step → "Έναρξη"
-            // Middle steps → "Επόμενο"
-            // Last step → "Ολοκλήρωση & Αξιολόγηση"
-            if (isFirst || !isLast || isLast)
+            // First step → "Start"
+            // Middle steps → "Next" only for cbt/grounding
+            // Last step → "Complete & Review"
+            if (isFirst || isLast || isStepExercise)
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                 child: SizedBox(
@@ -269,10 +270,10 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                     ),
                     child: Text(
                       isFirst
-                          ? 'Έναρξη →'
-                          : !isLast
-                              ? 'Επόμενο →'
-                              : 'Ολοκλήρωση & Αξιολόγηση →',
+                          ? 'Start →'
+                          : isLast
+                              ? 'Complete & Review →'
+                              : 'Next →',
                       style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w500),
                     ),

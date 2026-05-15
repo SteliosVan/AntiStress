@@ -20,10 +20,10 @@ class ResultScreen extends StatelessWidget {
             : const Color(0xFFA32D2D);
 
     final message = isPositive
-        ? 'Μείωση άγχους!'
+        ? 'Stress reduced!'
         : isNeutral
-            ? 'Δεν άλλαξε'
-            : 'Το άγχος αυξήθηκε';
+            ? 'No change'
+            : 'Stress increased';
 
     return Scaffold(
       backgroundColor: AppTheme.background,
@@ -88,21 +88,21 @@ class ResultScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         _Stat(
-                            label: 'Πριν',
+                            label: 'Before',
                             value: '${session.stressBefore}'),
                         Container(
                             height: 40,
                             width: 0.5,
                             color: AppTheme.cardBorder),
                         _Stat(
-                            label: 'Μετά',
+                            label: 'After',
                             value: '${session.stressAfter}'),
                         Container(
                             height: 40,
                             width: 0.5,
                             color: AppTheme.cardBorder),
                         _Stat(
-                            label: 'Τύπος',
+                            label: 'Type',
                             value: session.exerciseType),
                       ],
                     ),
@@ -112,7 +112,7 @@ class ResultScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Αξιολόγηση: ',
+                        Text('Rating: ',
                             style: TextStyle(
                                 fontSize: 13,
                                 color: AppTheme.textSecondary)),
@@ -149,7 +149,7 @@ class ResultScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(14)),
                     elevation: 0,
                   ),
-                  child: const Text('Επιστροφή στην αρχική',
+                  child: const Text('Back to Home',
                       style: TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w500)),
                 ),

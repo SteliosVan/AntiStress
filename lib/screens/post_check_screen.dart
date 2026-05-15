@@ -68,7 +68,7 @@ class _PostCheckScreenState extends State<PostCheckScreen> {
       backgroundColor: AppTheme.background,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Αξιολόγηση'),
+        title: const Text('Review'),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -109,7 +109,7 @@ class _PostCheckScreenState extends State<PostCheckScreen> {
                 child: StressSlider(
                   value: _postStress,
                   onChanged: (v) => setState(() => _postStress = v),
-                  label: 'Επίπεδο άγχους μετά:',
+                  label: 'Post-internvention stress level:',
                 ),
               ),
               const SizedBox(height: 16),
@@ -123,11 +123,11 @@ class _PostCheckScreenState extends State<PostCheckScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _StatCol(label: 'Πριν', value: '${widget.preStress}', color: AppTheme.textPrimary),
+                    _StatCol(label: 'Before', value: '${widget.preStress}', color: AppTheme.textPrimary),
                     const Icon(Icons.arrow_forward, color: AppTheme.primary, size: 18),
-                    _StatCol(label: 'Μετά', value: '$_postStress', color: AppTheme.primary),
+                    _StatCol(label: 'After', value: '$_postStress', color: AppTheme.primary),
                     _StatCol(
-                      label: 'Μεταβολή',
+                      label: 'Change',
                       value: widget.preStress - _postStress >= 0
                           ? '-${widget.preStress - _postStress}'
                           : '+${_postStress - widget.preStress}',
@@ -151,7 +151,7 @@ class _PostCheckScreenState extends State<PostCheckScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Πόσο σε βοήθησε η παρέμβαση;',
+                    Text('How helpful was the intervention?',
                         style: Theme.of(context).textTheme.titleMedium),
                     const SizedBox(height: 16),
                     Row(
@@ -199,7 +199,7 @@ class _PostCheckScreenState extends State<PostCheckScreen> {
                         borderRadius: BorderRadius.circular(14)),
                     elevation: 0,
                   ),
-                  child: const Text('Αποθήκευση & Επιστροφή',
+                  child: const Text('Save & Return',
                       style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
                 ),
               ),
@@ -210,7 +210,7 @@ class _PostCheckScreenState extends State<PostCheckScreen> {
     );
   }
 
-  static const _helpLabels = ['Καθόλου', 'Λίγο', 'Μέτρια', 'Αρκετά', 'Πολύ'];
+  static const _helpLabels = ['Not helpful', 'A little', 'Moderate', 'Quite helpful', 'Very helpful'];
 }
 
 class _StatCol extends StatelessWidget {

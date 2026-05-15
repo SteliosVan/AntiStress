@@ -22,7 +22,7 @@ class _StressInputScreenState extends State<StressInputScreen> {
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('Πώς νιώθεις;'),
+        title: const Text('How are you feeling?'),
       ),
       body: SafeArea(
         child: Padding(
@@ -41,7 +41,7 @@ class _StressInputScreenState extends State<StressInputScreen> {
                 child: StressSlider(
                   value: _stress,
                   onChanged: (v) => setState(() => _stress = v),
-                  label: 'Δήλωσε το επίπεδο άγχους σου:',
+                  label: 'Describe your stress level:',
                 ),
               ),
               const Spacer(),
@@ -63,7 +63,7 @@ class _StressInputScreenState extends State<StressInputScreen> {
                         borderRadius: BorderRadius.circular(14)),
                     elevation: 0,
                   ),
-                  child: const Text('Επέλεξε μέθοδο →',
+                  child: const Text('Choose a method →',
                       style: TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w500)),
                 ),
