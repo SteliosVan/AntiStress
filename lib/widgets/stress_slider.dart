@@ -87,7 +87,7 @@ class StressSlider extends StatelessWidget {
           data: SliderTheme.of(context).copyWith(
             activeTrackColor: _color,
             thumbColor: _color,
-            overlayColor: _color.withOpacity(0.12),
+            overlayColor: _color.withAlpha((0.12 * 255).toInt()),
           ),
           child: Slider(
             min: 1,

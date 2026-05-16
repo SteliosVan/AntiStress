@@ -30,8 +30,28 @@ class _MethodSelectScreenState extends State<MethodSelectScreen> {
     final saved = prefs.getStringList('enabled_exercises');
     if (saved != null) setState(() => _enabledIds = saved.toSet());
     for (final ex in exercises) {
-      final d = prefs.getDouble('duration_${ex.id}');
-      if (d != null) setState(() => _durations[ex.id] = d);
+      if (ex.id == '478' || ex.id == 'box') {
+        final d = prefs.getDouble('duration_${ex.id}');
+        if (d != null) setState(() => _durations[ex.id] = d);
+      } else {
+        final estimate = _getEstimateDuration(ex.id);
+        setState(() => _durations[ex.id] = estimate);
+      }
+    }
+  }
+
+  double _getEstimateDuration(String id) {
+    switch (id) {
+      case 'cbt':
+        return 10.0;
+      case 'grounding':
+        return 5.0;
+      case 'pmt':
+        return 3.0;
+      case '478':
+      case 'box':
+      default:
+        return 4.0;
     }
   }
 
@@ -167,7 +187,7 @@ class _MethodSelectScreenState extends State<MethodSelectScreen> {
                                         size: 13,
                                         color: AppTheme.primary),
                                     const SizedBox(width: 4),
-                                    Text('${duration.toInt()} λεπτά',
+                                    Text('${duration.toInt()} min',
                                         style: TextStyle(
                                             fontSize: 11,
                                             color: AppTheme.primary,

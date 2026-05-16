@@ -28,7 +28,7 @@ class HomeScreen extends StatelessWidget {
                   style: Theme.of(context).textTheme.displayLarge),
               const SizedBox(height: 4),
               Text(
-                'Small interventions to reduce stress',
+                'Micro-interventions to reduce stress',
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               const Spacer(),
@@ -47,7 +47,7 @@ class HomeScreen extends StatelessWidget {
                       color: AppTheme.primary,
                       boxShadow: [
                         BoxShadow(
-                          color: AppTheme.primary.withOpacity(0.35),
+                          color: AppTheme.primary.withAlpha((0.35 * 255).toInt()),
                           blurRadius: 32,
                           spreadRadius: 4,
                           offset: const Offset(0, 8),

@@ -61,7 +61,7 @@ class AppTheme {
           activeTrackColor: primary,
           inactiveTrackColor: primaryLight,
           thumbColor: primary,
-          overlayColor: primary.withOpacity(0.12),
+          overlayColor: primary.withAlpha((0.12 * 255).toInt()),
           trackHeight: 4,
         ),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
