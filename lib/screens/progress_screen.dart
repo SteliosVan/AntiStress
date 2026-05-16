@@ -355,7 +355,7 @@ class _EmptyState extends StatelessWidget {
         Text('No sessions yet',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(color: AppTheme.textSecondary)),
         const SizedBox(height: 6),
-        Text('Make your first intervention!',
+        Text('Complete your first session and track your progress here!',
             style: Theme.of(context).textTheme.bodyMedium),
       ]),
     ),

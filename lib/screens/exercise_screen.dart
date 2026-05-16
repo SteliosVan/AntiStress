@@ -96,7 +96,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                       fontSize: 11, color: AppTheme.textTertiary)),
           ],
         ),
-        actions: [
+        actions: isFirst ? null : [
           IconButton(
             icon: const Icon(Icons.check_circle_outline, size: 26),
             color: AppTheme.primary,
