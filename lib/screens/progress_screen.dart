@@ -316,7 +316,7 @@ class _MetricCard extends StatelessWidget {
           Text(subtitle!, style: const TextStyle(fontSize: 10, color: AppTheme.primary, fontWeight: FontWeight.w500)),
         ],
         const SizedBox(height: 2),
-        Text(label, style: const TextStyle(fontSize: 11, color: AppTheme.textTertiary)),
+        Text(label, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 11, color: AppTheme.textTertiary)),
       ]),
     );
   }
