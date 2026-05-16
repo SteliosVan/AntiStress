@@ -10,6 +10,7 @@ class ExerciseStep {
   final String? inputHint;
   final int? breathDurationSeconds;
   final String? voiceText;
+  final String? icon;
 
   const ExerciseStep({
     required this.title,
@@ -19,6 +20,7 @@ class ExerciseStep {
     this.inputHint,
     this.breathDurationSeconds,
     this.voiceText,
+    this.icon,
   });
 }
 
@@ -229,22 +231,62 @@ final List<Exercise> exercises = [
       ExerciseStep(
         title: 'Preparation',
         body:
-            'Lie down or sit comfortably. We will go through 4 muscle groups: tense each one for 5 seconds, then fully release.',
+            'Lie down or sit comfortably. We will go through 6 muscle groups: tense each one for 5 seconds, then fully release.',
+        voiceText:
+            'Lie down or sit comfortably. We will go through six muscle groups.\nTense each one for five seconds, then fully release.\nNotice the difference between tension and relaxation.',
       ),
       ExerciseStep(
-        title: 'Legs & calves',
+        title: 'Feet',
         body:
-            'Tighten your toes and feet for 5 sec.\nThen let them fully relax for 20 sec.\nNotice the difference.',
+            'Gently tense the muscles in your feet. Hold for 5 seconds and then slowly release. Notice the difference between tension and relaxation.',
+        voiceText:
+            'Gently tense the muscles in your feet. Hold for five seconds and then slowly release. Notice the difference between tension and relaxation.',
+        icon: 'feet',
       ),
       ExerciseStep(
-        title: 'Abs & chest',
+        title: 'Calves & Legs',
         body:
-            'Take a deep breath and tighten your abdomen for 5 sec.\nExhale slowly and fully relax for 20 sec.',
+            'Now tighten your calves and legs. Hold gently for 5 seconds and release. Let your legs feel heavier and more relaxed.',
+        voiceText:
+            'Now tighten your calves and legs. Hold gently for five seconds and release. Let your legs feel heavier and more relaxed.',
+        icon: 'legs',
       ),
       ExerciseStep(
-        title: 'Arms & shoulders',
+        title: 'Abdomen',
         body:
-            'Clench your fists and lift your shoulders toward your ears for 5 sec.\nRelease and let your arms fall heavy.',
+            'Now tighten your stomach muscles. Hold for 5 seconds and let go.',
+        voiceText:
+            'Now tighten your stomach muscles. Hold for five seconds and let go.',
+        icon: 'abdomen',
+      ),
+      ExerciseStep(
+        title: 'Hands & Arms',
+        body:
+            'Now make soft fists with your hands. Tighten your hands and arms. Hold for 5 seconds and release.',
+        voiceText:
+            'Now make soft fists with your hands. Tighten your hands and arms. Hold for five seconds and release.',
+        icon: 'arms',
+      ),
+      ExerciseStep(
+        title: 'Shoulders',
+        body:
+            'Let your shoulders drop naturally. Now gently raise and tense your shoulders. Hold for 5 seconds and relax.',
+        voiceText:
+            'Let your shoulders drop naturally. Now gently raise and tense your shoulders. Hold for five seconds and relax.',
+        icon: 'shoulders',
+      ),
+      ExerciseStep(
+        title: 'Facial muscles',
+        body:
+            'Finally, gently tighten the muscles in your face. Squeeze lightly for 5 seconds and release completely.',
+        voiceText:
+            'Finally, gently tighten the muscles in your face. Squeeze lightly for five seconds and release completely.',
+        icon: 'face',
+      ),
+      ExerciseStep(
+        title: 'Completed!',
+        body:
+            'You have completed the muscle relaxation sequence. Notice how your body feels now after releasing tension.',
       ),
     ],
   ),

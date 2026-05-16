@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../data/exercises.dart';
+import '../services/background_audio_service.dart';
 import '../theme.dart';
 import '../widgets/breath_animation.dart';
 import '../widgets/tension_release_animation.dart';
@@ -84,6 +85,8 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   }
 
   Future<void> _speakCurrentStep() async {
+    if (!BackgroundAudioService.instance.voiceEnabled) return;
+
     String? voiceText = widget.exercise.steps[_step].voiceText;
     if (widget.exercise.id == 'grounding' && _step == 1) {
       voiceText = _groundingSubSteps[_groundingSubStep]['voiceText'];
@@ -97,8 +100,15 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
         .where((line) => line.isNotEmpty)
         .join(' ');
 
+    if (BackgroundAudioService.instance.musicEnabled) {
+      await BackgroundAudioService.instance.duckForVoice();
+    }
+
     await _flutterTts.speak(speechText);
-    await Future.delayed(const Duration(milliseconds: 1200));
+
+    if (BackgroundAudioService.instance.musicEnabled) {
+      await BackgroundAudioService.instance.restoreVolumeAfterVoice();
+    }
   }
 
   void _cancelSession() {
@@ -140,6 +150,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
         return Icons.remove_red_eye;
     }
   }
+
 
   void _next() {
     if (widget.exercise.id == 'grounding' && _step == 1) {
@@ -355,7 +366,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                         ),
                       ],
 
-                      if (widget.exercise.id == 'pmt' && _step > 0) ...[
+                      if (widget.exercise.id == 'pmt' && _step > 0 && !isLast) ...[
                         TensionReleaseAnimation(
                           key: ValueKey<int>(_step),
                           onComplete: () {},

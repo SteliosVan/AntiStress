@@ -4,6 +4,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'screens/home_screen.dart';
 import 'screens/progress_screen.dart';
 import 'screens/settings_screen.dart';
+import 'services/background_audio_service.dart';
 import 'theme.dart';
 
 final GlobalKey<ProgressScreenState> progressScreenKey =
@@ -44,6 +45,14 @@ class MainShell extends StatefulWidget {
 
 class _MainShellState extends State<MainShell> {
   int _index = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    BackgroundAudioService.instance.init().catchError((error) {
+      // If audio service fails to initialize, keep the UI responsive.
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
