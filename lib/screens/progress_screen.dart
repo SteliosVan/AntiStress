@@ -96,7 +96,7 @@ class ProgressScreenState extends State<ProgressScreen> {
                               : '+${(-_avgReduction).toStringAsFixed(1)}',
                           valueColor: _avgReduction >= 0 ? AppTheme.primary : const Color(0xFFA32D2D),
                           icon: Icons.trending_down),
-                      _MetricCard(label: 'Average  stress level before intervention', value: _avgBefore.toStringAsFixed(1), icon: Icons.mood_bad),
+                      _MetricCard(label: 'Average stress before intervention', value: _avgBefore.toStringAsFixed(1), icon: Icons.mood_bad),
                       _MetricCard(
                           label: 'Average rating',
                           value: '${_avgHelpfulness.toStringAsFixed(1)} ⭐',
@@ -250,13 +250,23 @@ class _MetricCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppTheme.cardBorder, width: 0.5),
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Icon(icon, size: 16, color: AppTheme.textTertiary),
-        const Spacer(),
-        Text(value, style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600,
-            color: valueColor ?? AppTheme.textPrimary)),
-        Text(label, style: const TextStyle(fontSize: 11, color: AppTheme.textTertiary)),
-      ]),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 16, color: AppTheme.textTertiary),
+          const SizedBox(height: 10),
+          Text(value,
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600,
+                  color: valueColor ?? AppTheme.textPrimary)),
+          const SizedBox(height: 6),
+          Expanded(
+            child: Text(label,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 11, color: AppTheme.textTertiary)),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -294,7 +304,7 @@ class _EmptyState extends StatelessWidget {
         Text('No sessions yet',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(color: AppTheme.textSecondary)),
         const SizedBox(height: 6),
-        Text('Make your first intervention!',
+        Text('Complete your first session and track your progress here!',
             style: Theme.of(context).textTheme.bodyMedium),
       ]),
     ),

@@ -61,7 +61,7 @@ class _MethodSelectScreenState extends State<MethodSelectScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.close),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
         ),
         title: const Text('Choose a method'),
       ),
