@@ -6,12 +6,14 @@ class BreathAnimationWidget extends StatefulWidget {
   final String exerciseId;
   final int maxCycles;
   final VoidCallback? onComplete;
+  final ValueChanged<String>? onPhaseChanged;
 
   const BreathAnimationWidget({
     super.key,
     required this.exerciseId,
     required this.maxCycles,
     this.onComplete,
+    this.onPhaseChanged,
   });
 
   @override
@@ -98,6 +100,7 @@ class _BreathAnimationWidgetState extends State<BreathAnimationWidget>
       });
     });
     
+    widget.onPhaseChanged?.call(phase.label);
     _phaseTimer = Timer(Duration(milliseconds: phaseDurationMs.toInt()), () {
       if (!mounted) return;
       _updateTimer?.cancel();

@@ -9,6 +9,7 @@ class ExerciseStep {
   final bool hasInput;
   final String? inputHint;
   final int? breathDurationSeconds;
+  final String? voiceText;
 
   const ExerciseStep({
     required this.title,
@@ -17,6 +18,7 @@ class ExerciseStep {
     this.hasInput = false,
     this.inputHint,
     this.breathDurationSeconds,
+    this.voiceText,
   });
 }
 
@@ -74,12 +76,22 @@ final List<Exercise> exercises = [
         title: 'Preparation',
         body:
             'Sit comfortably with your back straight. Relax your shoulders.',
+        voiceText:
+            'Find a comfortable position.\n'
+            'Sit comfortably with your back straight and relax your shoulders.\n'
+            'Place one hand on your chest and one on your belly.\n'
+            'Simply follow the rhythm on the screen.',
       ),
       ExerciseStep(
         title: 'Follow the rhythm',
         body: 'Inhale 5 sec → exhale 5 sec',
         hasBreathAnimation: true,
         breathDurationSeconds: 10,
+        voiceText:
+            'As you breathe, try to let your belly rise gently while your chest stays relatively still.\n'
+            'There is no need to force the breath. Let the exhale feel slow and easy.\n'
+            'Allow your breathing to settle into a natural rhythm.\n'
+            'If your mind wanders, gently return attention to the breath.',
       ),
       ExerciseStep(
         title: 'Completed!',
@@ -103,6 +115,10 @@ final List<Exercise> exercises = [
       ExerciseStep(
         title: 'Preparation',
         body: 'Sit comfortably with your back straight. Relax your shoulders.',
+        voiceText:
+            'Find a comfortable position.\n'
+            'Sit comfortably with your back straight and relax your shoulders.\n'
+            'Simply follow the rhythm on the screen.',
       ),
       ExerciseStep(
         title: 'Follow the rhythm',
@@ -110,6 +126,16 @@ final List<Exercise> exercises = [
             'Inhale 4 sec → hold 4 sec → exhale 4 sec → hold 4 sec',
         hasBreathAnimation: true,
         breathDurationSeconds: 16,
+        voiceText:
+            'We’ll breathe in four phases.\n'
+            'Inhale.\n'
+            'Hold.\n'
+            'Exhale.\n'
+            'Hold.\n'
+            'Each phase lasts four seconds.\n'
+            'Keep the breath smooth.\n'
+            'Stay with the rhythm.\n'
+            'No need to strain.',
       ),
       ExerciseStep(
         title: 'Great job!',
@@ -172,7 +198,9 @@ final List<Exercise> exercises = [
       ExerciseStep(
         title: 'Preparation',
         body:
-            'Look around slowly. Take a deep breath. We will use the 5 senses to return to the present.',
+            'Take a moment to pause. If you can, move to a quiet place and sit comfortably. For the next minutes, simply focus on the present moment and the space around you.',
+        voiceText:
+            'Take a moment to pause. If you can, move to a quiet place and sit comfortably. For the next minutes, simply focus on the present moment and the space around you.',
       ),
       ExerciseStep(
         title: 'Sense awareness',
