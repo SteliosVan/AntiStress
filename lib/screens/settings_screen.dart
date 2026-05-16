@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../data/exercises.dart';
+import '../services/background_audio_service.dart';
 import '../theme.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -12,7 +13,9 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   Set<String> _enabledIds = exercises.map((e) => e.id).toSet();
-  Map<String, double> _durations = {};
+  final Map<String, double> _durations = {};
+  bool _voiceEnabled = true;
+  bool _musicEnabled = true;
 
   @override
   void initState() {
@@ -26,7 +29,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _load() async {
     final prefs = await SharedPreferences.getInstance();
     final saved = prefs.getStringList('enabled_exercises');
+    final voicePrefs = prefs.getBool('enable_voice_instructions');
+    final musicPrefs = prefs.getBool('enable_background_music');
     if (saved != null) setState(() => _enabledIds = saved.toSet());
+    setState(() {
+      _voiceEnabled = voicePrefs ?? true;
+      _musicEnabled = musicPrefs ?? true;
+    });
     for (final ex in exercises) {
       if (ex.id == '478' || ex.id == 'box') {
         final d = prefs.getDouble('duration_${ex.id}');
@@ -62,6 +71,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (id != '478' && id != 'box') return;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('duration_$id', value);
+  }
+
+  Future<void> _saveVoiceEnabled(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('enable_voice_instructions', value);
+    BackgroundAudioService.instance.setVoiceEnabled(value);
+  }
+
+  Future<void> _saveMusicEnabled(bool value) async {
+    await BackgroundAudioService.instance.setMusicEnabled(value);
   }
 
   void _toggleExercise(String id) {
@@ -238,38 +257,48 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 8),
               Text('Settings',
                   style: Theme.of(context).textTheme.headlineMedium),
-              const SizedBox(height: 4),
-              Text('Enable methods and set their duration',
-                  style: Theme.of(context).textTheme.bodyMedium),
-              const SizedBox(height: 12),
+              const SizedBox(height: 20),
+              Text('AUDIO',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      letterSpacing: 0.8, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 8),
               Container(
-                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryLight,
-                  borderRadius: BorderRadius.circular(12),
+                  color: AppTheme.surface,
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: AppTheme.cardBorder, width: 0.5),
                 ),
-                child: Row(
+                child: Column(
                   children: [
-                    const Icon(Icons.touch_app_outlined,
-                        size: 16, color: AppTheme.primaryDark),
-                    const SizedBox(width: 8),
-                    const Expanded(
-                      child: Text(
-                        'Tap a method to set its duration',
-                        style: TextStyle(
-                            fontSize: 12, color: AppTheme.primaryDark),
-                      ),
+                    SwitchListTile(
+                      title: const Text('Voice instructions'),
+                      value: _voiceEnabled,
+                      onChanged: (value) {
+                        setState(() => _voiceEnabled = value);
+                        _saveVoiceEnabled(value);
+                      },
+                      activeThumbColor: AppTheme.primary,
+                    ),
+                    const Divider(height: 1, thickness: 0.5),
+                    SwitchListTile(
+                      title: const Text('Background music'),
+                      value: _musicEnabled,
+                      onChanged: (value) {
+                        setState(() => _musicEnabled = value);
+                        _saveMusicEnabled(value);
+                      },
+                      activeThumbColor: AppTheme.primary,
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
                 Text('METHODS',
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     letterSpacing: 0.8, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 10),
                 Text(
-                'Note: Duration can only be adjusted for breathing exercises',
+                'Note: You can adjust the duration of the breathing exercises. Tap on an exercise to set your preferred duration.',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: AppTheme.textTertiary),
                 ),

@@ -26,7 +26,7 @@ class _TensionReleaseAnimationState extends State<TensionReleaseAnimation>
   bool _isTensing = true;
 
   static const int tenseDuration = 5;
-  static const int releaseDuration = 20;
+  static const int releaseDuration = 10;
   static const double minScale = 0.4;
   static const double maxScale = 1.0;
 
