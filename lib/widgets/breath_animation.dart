@@ -145,7 +145,7 @@ class _BreathAnimationWidgetState extends State<BreathAnimationWidget>
                 ? CustomPaint(
                     painter: _BoxEdgePainter(
                       activeColor: phase?.color ?? AppTheme.primary,
-                      baseColor: (phase?.color ?? AppTheme.primary).withOpacity(0.35),
+                      baseColor: (phase?.color ?? AppTheme.primary).withAlpha((0.35 * 255).toInt()),
                       edgeIndex: _phaseIndex,
                       progress: phase == null ? 0.0 : _phaseProgress,
                       borderWidth: 4,
@@ -154,7 +154,7 @@ class _BreathAnimationWidgetState extends State<BreathAnimationWidget>
                       width: 120,
                       height: 120,
                       decoration: BoxDecoration(
-                        color: (phase?.color ?? AppTheme.primary).withOpacity(0.08),
+                        color: (phase?.color ?? AppTheme.primary).withAlpha((0.08 * 255).toInt()),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       alignment: Alignment.center,
@@ -176,7 +176,7 @@ class _BreathAnimationWidgetState extends State<BreathAnimationWidget>
                         color: phase?.color ?? AppTheme.primary,
                         width: 2,
                       ),
-                      color: (phase?.color ?? AppTheme.primary).withOpacity(0.08),
+                      color: (phase?.color ?? AppTheme.primary).withAlpha((0.08 * 255).toInt()),
                     ),
                     alignment: Alignment.center,
                     child: Text(

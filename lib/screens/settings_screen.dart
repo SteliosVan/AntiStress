@@ -28,8 +28,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final saved = prefs.getStringList('enabled_exercises');
     if (saved != null) setState(() => _enabledIds = saved.toSet());
     for (final ex in exercises) {
-      final d = prefs.getDouble('duration_${ex.id}');
-      if (d != null) setState(() => _durations[ex.id] = d);
+      if (ex.id == '478' || ex.id == 'box') {
+        final d = prefs.getDouble('duration_${ex.id}');
+        if (d != null) setState(() => _durations[ex.id] = d);
+      } else {
+        final estimate = _getEstimateDuration(ex.id);
+        setState(() => _durations[ex.id] = estimate);
+      }
+    }
+  }
+
+  double _getEstimateDuration(String id) {
+    switch (id) {
+      case 'cbt':
+        return 10.0;
+      case 'grounding':
+        return 5.0;
+      case 'pmt':
+        return 3.0;
+      case '478':
+      case 'box':
+      default:
+        return 4.0;
     }
   }
 
@@ -39,6 +59,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _saveDuration(String id, double value) async {
+    if (id != '478' && id != 'box') return;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('duration_$id', value);
   }
@@ -121,7 +142,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   activeTrackColor: AppTheme.primary,
                   thumbColor: AppTheme.primary,
                   inactiveTrackColor: AppTheme.primaryLight,
-                  overlayColor: AppTheme.primary.withOpacity(0.12),
+                  overlayColor: AppTheme.primary.withAlpha((0.12 * 255).toInt()),
                   trackHeight: 5,
                   thumbShape: const RoundSliderThumbShape(
                       enabledThumbRadius: 10),
@@ -243,10 +264,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              Text('METHODS',
+                Text('METHODS',
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      letterSpacing: 0.8, fontWeight: FontWeight.w600)),
-              const SizedBox(height: 10),
+                    letterSpacing: 0.8, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 10),
+                Text(
+                'Note: Duration can only be adjusted for breathing exercises',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: AppTheme.textTertiary),
+                ),
+                const SizedBox(height: 12),
               Container(
                 decoration: BoxDecoration(
                   color: AppTheme.surface,
@@ -264,7 +291,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     return Column(
                       children: [
                         InkWell(
-                          onTap: ex.id == 'cbt' || ex.id == 'grounding' ? null : () => _showDurationPicker(ex),
+                          onTap: ex.id == '478' || ex.id == 'box' ? () => _showDurationPicker(ex) : null,
                           borderRadius: i == 0
                               ? const BorderRadius.vertical(
                               top: Radius.circular(18))
@@ -275,7 +302,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 14),
-                            child: Row(
+                            child: Opacity(
+                              opacity: (ex.id == '478' || ex.id == 'box') && !enabled ? 0.6 : 1.0,
+                              child: Row(
                               children: [
                                 Container(
                                   width: 44,
@@ -340,7 +369,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                                   : AppTheme.textTertiary),
                                           const SizedBox(width: 3),
                                           Text(
-                                            '${duration.toInt()} λεπτά',
+                                            '${duration.toInt()} min',
                                             style: TextStyle(
                                                 fontSize: 11,
                                                 color: enabled
@@ -356,9 +385,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 Switch(
                                   value: enabled,
                                   onChanged: (_) => _toggleExercise(ex.id),
-                                  activeColor: AppTheme.primary,
+                                  activeThumbColor: AppTheme.primary,
                                 ),
                               ],
+                            ),
                             ),
                           ),
                         ),
