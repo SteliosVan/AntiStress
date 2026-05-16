@@ -37,6 +37,9 @@ class ProgressScreenState extends State<ProgressScreen> {
 
   double get _avgReduction => _avgBefore - _avgAfter;
 
+  double get _avgReductionPercent =>
+      _avgBefore > 0 ? (_avgReduction / _avgBefore * 100) : 0;
+
   double get _avgHelpfulness => _sessions.isEmpty ? 0
       : _sessions.map((s) => s.helpfulness).reduce((a, b) => a + b) / _sessions.length;
 
@@ -80,28 +83,49 @@ class ProgressScreenState extends State<ProgressScreen> {
                 if (_sessions.isEmpty)
                   _EmptyState()
                 else ...[
-                  GridView.count(
-                    crossAxisCount: 2,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    childAspectRatio: 1.6,
+                  Row(
                     children: [
-                      _MetricCard(label: 'Session(s)', value: '${_sessions.length}', icon: Icons.self_improvement),
-                      _MetricCard(
-                          label: 'Average stress level reduction',
+                      Expanded(
+                        child: _MetricCard(
+                          label: 'Sessions',
+                          value: '${_sessions.length}',
+                          icon: Icons.self_improvement,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _MetricCard(
+                          label: 'Avg. reduction',
                           value: _avgReduction >= 0
                               ? '-${_avgReduction.toStringAsFixed(1)}'
                               : '+${(-_avgReduction).toStringAsFixed(1)}',
-                          valueColor: _avgReduction >= 0 ? AppTheme.primary : const Color(0xFFA32D2D),
-                          icon: Icons.trending_down),
-                      _MetricCard(label: 'Average stress before intervention', value: _avgBefore.toStringAsFixed(1), icon: Icons.mood_bad),
-                      _MetricCard(
-                          label: 'Average rating',
+                          valueColor: _avgReduction >= 0
+                              ? AppTheme.primary
+                              : const Color(0xFFA32D2D),
+                          icon: Icons.trending_down,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _MetricCard(
+                          label: 'Avg. stress before',
+                          value: _avgBefore.toStringAsFixed(1),
+                          icon: Icons.mood_bad,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _MetricCard(
+                          label: 'Avg. rating',
                           value: '${_avgHelpfulness.toStringAsFixed(1)} ⭐',
                           valueColor: const Color(0xFFEDAB3A),
-                          icon: Icons.star_outline),
+                          icon: Icons.star_outline,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 24),
@@ -147,13 +171,29 @@ class ProgressScreenState extends State<ProgressScreen> {
         .map((e) => FlSpot(e.key.toDouble(), e.value.stressAfter.toDouble())).toList();
 
     return LineChartData(
+      lineTouchData: LineTouchData(
+        enabled: true,
+        touchTooltipData: LineTouchTooltipData(
+          getTooltipItems: (spots) => spots.map((s) {
+            final isFirst = s.barIndex == 0;
+            return LineTooltipItem(
+              '${isFirst ? "Before" : "After"}: ${s.y.toInt()}',
+              TextStyle(
+                color: isFirst ? AppTheme.primary : const Color(0xFF378ADD),
+                fontWeight: FontWeight.w600,
+                fontSize: 12,
+              ),
+            );
+          }).toList(),
+        ),
+      ),
       gridData: FlGridData(
         show: true, drawVerticalLine: false,
         getDrawingHorizontalLine: (_) => FlLine(color: AppTheme.cardBorder, strokeWidth: 0.5),
       ),
       titlesData: FlTitlesData(
         leftTitles: AxisTitles(sideTitles: SideTitles(
-          showTitles: true, interval: 2, reservedSize: 28,
+          showTitles: true, interval: 1, reservedSize: 28,
           getTitlesWidget: (v, _) => Text('${v.toInt()}',
               style: const TextStyle(fontSize: 10, color: AppTheme.textTertiary)),
         )),
@@ -166,7 +206,7 @@ class ProgressScreenState extends State<ProgressScreen> {
         topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
       ),
       borderData: FlBorderData(show: false),
-      minX: 0, maxX: (_sessions.length - 1).toDouble(), minY: 0, maxY: 10,
+      minX: 0, maxX: (_sessions.length - 1).toDouble(), minY: 0, maxY: 5,
       lineBarsData: [
         LineChartBarData(
           spots: spots1, isCurved: true, color: AppTheme.primary, barWidth: 2.5,
@@ -195,7 +235,7 @@ class ProgressScreenState extends State<ProgressScreen> {
 
     return BarChartData(
       alignment: BarChartAlignment.spaceAround,
-      maxY: 10,
+      maxY: 5,
       barTouchData: BarTouchData(enabled: false),
       titlesData: FlTitlesData(
         bottomTitles: AxisTitles(sideTitles: SideTitles(
@@ -207,12 +247,27 @@ class ProgressScreenState extends State<ProgressScreen> {
           },
         )),
         leftTitles: AxisTitles(sideTitles: SideTitles(
-          showTitles: true, interval: 2, reservedSize: 28,
+          showTitles: true, interval: 1, reservedSize: 28,
           getTitlesWidget: (v, _) => Text('${v.toInt()}',
               style: const TextStyle(fontSize: 10, color: AppTheme.textTertiary)),
         )),
         rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        topTitles: AxisTitles(sideTitles: SideTitles(
+          showTitles: true,
+          reservedSize: 24,
+          getTitlesWidget: (v, _) {
+            final i = v.toInt();
+            if (i < types.length) {
+              final val = _byType[types[i]]!.avgReduction;
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Text(val.toStringAsFixed(1),
+                    style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppTheme.textSecondary)),
+              );
+            }
+            return const SizedBox();
+          },
+        )),
       ),
       gridData: FlGridData(
         drawVerticalLine: false,
@@ -220,7 +275,7 @@ class ProgressScreenState extends State<ProgressScreen> {
       ),
       borderData: FlBorderData(show: false),
       barGroups: types.asMap().entries.map((e) {
-        final val = _byType[e.value]!.avgReduction.clamp(0.0, 10.0);
+        final val = _byType[e.value]!.avgReduction.clamp(0.0, 5.0);
         return BarChartGroupData(x: e.key, barRods: [
           BarChartRodData(
             toY: val,
@@ -237,9 +292,10 @@ class ProgressScreenState extends State<ProgressScreen> {
 class _MetricCard extends StatelessWidget {
   final String label;
   final String value;
+  final String? subtitle;
   final Color? valueColor;
   final IconData icon;
-  const _MetricCard({required this.label, required this.value, this.valueColor, required this.icon});
+  const _MetricCard({required this.label, required this.value, this.subtitle, this.valueColor, required this.icon});
 
   @override
   Widget build(BuildContext context) {
@@ -250,23 +306,18 @@ class _MetricCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppTheme.cardBorder, width: 0.5),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, size: 16, color: AppTheme.textTertiary),
-          const SizedBox(height: 10),
-          Text(value,
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600,
-                  color: valueColor ?? AppTheme.textPrimary)),
-          const SizedBox(height: 6),
-          Expanded(
-            child: Text(label,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 11, color: AppTheme.textTertiary)),
-          ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Icon(icon, size: 16, color: AppTheme.textTertiary),
+        const SizedBox(height: 10),
+        Text(value, style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600,
+            color: valueColor ?? AppTheme.textPrimary)),
+        if (subtitle != null) ...[
+          const SizedBox(height: 2),
+          Text(subtitle!, style: const TextStyle(fontSize: 10, color: AppTheme.primary, fontWeight: FontWeight.w500)),
         ],
-      ),
+        const SizedBox(height: 2),
+        Text(label, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 11, color: AppTheme.textTertiary)),
+      ]),
     );
   }
 }
