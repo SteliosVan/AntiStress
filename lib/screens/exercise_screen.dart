@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../data/exercises.dart';
 import '../theme.dart';
 import '../widgets/breath_animation.dart';
+import '../widgets/tension_release_animation.dart';
 import 'post_check_screen.dart';
 
 class ExerciseScreen extends StatefulWidget {
@@ -19,12 +21,48 @@ class ExerciseScreen extends StatefulWidget {
 class _ExerciseScreenState extends State<ExerciseScreen> {
   int _step = 0;
   int _durationMinutes = 0;
+  int _groundingSubStep = 0;
   final Map<int, String> _inputs = {};
+  late FlutterTts _flutterTts;
+
+  static const List<Map<String, String>> _groundingSubSteps = [
+    {
+      'title': '5 things you SEE',
+      'body': 'Slowly look around and identify five things you can see right now.',
+      'icon': 'eye',
+      'voiceText': 'Slowly look around and identify five things you can see right now.',
+    },
+    {
+      'title': '4 things you TOUCH',
+      'body': 'Reach out and notice four textures or objects you can touch.',
+      'icon': 'touch',
+      'voiceText': 'Reach out and notice four textures or objects you can touch.',
+    },
+    {
+      'title': '3 things you HEAR',
+      'body': 'Listen carefully and name three sounds you can hear.',
+      'icon': 'hear',
+      'voiceText': 'Listen carefully and name three sounds you can hear.',
+    },
+    {
+      'title': '2 things you SMELL',
+      'body': 'Notice two scents around you, even if they are faint.',
+      'icon': 'smell',
+      'voiceText': 'Notice two scents around you, even if they are faint.',
+    },
+    {
+      'title': '1 thing you TASTE',
+      'body': 'Focus on one taste in your mouth or a subtle flavor nearby.',
+      'icon': 'taste',
+      'voiceText': 'Focus on one taste in your mouth or a subtle flavor nearby.',
+    },
+  ];
 
   @override
   void initState() {
     super.initState();
     _loadDuration();
+    _initTts();
   }
 
   Future<void> _loadDuration() async {
@@ -33,6 +71,34 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     setState(() {
       _durationMinutes = (saved ?? widget.exercise.durationMinutes.toDouble()).toInt();
     });
+  }
+
+  Future<void> _initTts() async {
+    _flutterTts = FlutterTts();
+    await _flutterTts.setLanguage('en-US');
+    await _flutterTts.setSpeechRate(0.42);
+    await _flutterTts.setPitch(1.0);
+    await _flutterTts.setVolume(1.0);
+    await _flutterTts.awaitSpeakCompletion(true);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _speakCurrentStep());
+  }
+
+  Future<void> _speakCurrentStep() async {
+    String? voiceText = widget.exercise.steps[_step].voiceText;
+    if (widget.exercise.id == 'grounding' && _step == 1) {
+      voiceText = _groundingSubSteps[_groundingSubStep]['voiceText'];
+    }
+    if (voiceText == null || voiceText.isEmpty) return;
+    await _flutterTts.stop();
+
+    final speechText = voiceText
+        .split('\n')
+        .map((line) => line.trim())
+        .where((line) => line.isNotEmpty)
+        .join(' ');
+
+    await _flutterTts.speak(speechText);
+    await Future.delayed(const Duration(milliseconds: 1200));
   }
 
   void _cancelSession() {
@@ -59,12 +125,44 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     return (totalSeconds / breathDurationSeconds).ceil();
   }
 
+  IconData _groundingIcon(String iconKey) {
+    switch (iconKey) {
+      case 'touch':
+        return Icons.touch_app;
+      case 'hear':
+        return Icons.hearing;
+      case 'smell':
+        return Icons.spa;
+      case 'taste':
+        return Icons.restaurant;
+      case 'eye':
+      default:
+        return Icons.remove_red_eye;
+    }
+  }
+
   void _next() {
+    if (widget.exercise.id == 'grounding' && _step == 1) {
+      if (_groundingSubStep < _groundingSubSteps.length - 1) {
+        setState(() => _groundingSubStep++);
+        _speakCurrentStep();
+        return;
+      }
+      setState(() => _groundingSubStep = 0);
+    }
+
     if (_step < widget.exercise.steps.length - 1) {
       setState(() => _step++);
+      _speakCurrentStep();
     } else {
       _completeSession();
     }
+  }
+
+  @override
+  void dispose() {
+    _flutterTts.stop();
+    super.dispose();
   }
 
   @override
@@ -74,6 +172,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     final isLast = _step == steps.length - 1;
     final isFirst = _step == 0;
     final isStepExercise = widget.exercise.id == 'cbt' || widget.exercise.id == 'grounding' || widget.exercise.id == 'pmt';
+    final isGroundingSenseStep = widget.exercise.id == 'grounding' && _step == 1;
 
     return Scaffold(
       backgroundColor: AppTheme.background,
@@ -193,9 +292,57 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                       Text(step.title,
                           style: Theme.of(context).textTheme.headlineMedium),
                       const SizedBox(height: 10),
-                      Text(step.body,
-                          style: Theme.of(context).textTheme.bodyLarge),
-                      const SizedBox(height: 28),
+                      if (isGroundingSenseStep) ...[
+                        Text(
+                          'Step ${_groundingSubStep + 1} of ${_groundingSubSteps.length}',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(color: AppTheme.textTertiary),
+                        ),
+                        const SizedBox(height: 12),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                            color: widget.exercise.color.withAlpha((0.12 * 255).round()),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 64,
+                                height: 64,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(18),
+                                ),
+                                child: Icon(
+                                  _groundingIcon(_groundingSubSteps[_groundingSubStep]['icon']!),
+                                  size: 36,
+                                  color: widget.exercise.color,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              Text(
+                                _groundingSubSteps[_groundingSubStep]['title']!,
+                                style: Theme.of(context).textTheme.headlineSmall,
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                _groundingSubSteps[_groundingSubStep]['body']!,
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 28),
+                      ] else ...[
+                        Text(step.body,
+                            style: Theme.of(context).textTheme.bodyLarge),
+                        const SizedBox(height: 28),
+                      ],
 
                       if (step.hasBreathAnimation) ...[
                         BreathAnimationWidget(
@@ -204,6 +351,13 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                             _durationMinutes,
                             step.breathDurationSeconds,
                           ),
+                          onComplete: () {},
+                        ),
+                      ],
+
+                      if (widget.exercise.id == 'pmt' && _step > 0) ...[
+                        TensionReleaseAnimation(
+                          key: ValueKey<int>(_step),
                           onComplete: () {},
                         ),
                       ],
@@ -273,7 +427,9 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                           ? 'Start →'
                           : isLast
                               ? 'Complete & Review →'
-                              : 'Next →',
+                              : isStepExercise
+                                  ? 'Continue →'
+                                  : 'Next →',
                       style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w500),
                     ),
