@@ -209,13 +209,13 @@ class ProgressScreenState extends State<ProgressScreen> {
       minX: 0, maxX: (_sessions.length - 1).toDouble(), minY: 0, maxY: 5,
       lineBarsData: [
         LineChartBarData(
-          spots: spots1, isCurved: true, color: AppTheme.primary, barWidth: 2.5,
+          spots: spots1, isCurved: false, color: AppTheme.primary, barWidth: 2.5,
           dotData: FlDotData(getDotPainter: (_, __, ___, ____) =>
               FlDotCirclePainter(radius: 4, color: AppTheme.primary, strokeWidth: 0, strokeColor: Colors.transparent)),
           belowBarData: BarAreaData(show: true, color: AppTheme.primary.withOpacity(0.08)),
         ),
         LineChartBarData(
-          spots: spots2, isCurved: true, color: const Color(0xFF378ADD),
+          spots: spots2, isCurved: false, color: const Color(0xFF378ADD),
           barWidth: 2.5, dashArray: [5, 3],
           dotData: FlDotData(getDotPainter: (_, __, ___, ____) =>
               FlDotCirclePainter(radius: 4, color: const Color(0xFF378ADD), strokeWidth: 0, strokeColor: Colors.transparent)),
