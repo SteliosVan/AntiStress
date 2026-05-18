@@ -5,6 +5,7 @@ import 'screens/home_screen.dart';
 import 'screens/progress_screen.dart';
 import 'screens/settings_screen.dart';
 import 'services/background_audio_service.dart';
+
 import 'theme.dart';
 
 final GlobalKey<ProgressScreenState> progressScreenKey =
@@ -13,6 +14,7 @@ GlobalKey<ProgressScreenState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('el', null);
+  
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
