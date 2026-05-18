@@ -162,26 +162,51 @@ final List<Exercise> exercises = [
         title: 'Introduction',
         body:
             'We will examine a stressful thought step-by-step. The goal is to see it more objectively — not ignore it.',
+        voiceText:
+            'We will examine a stressful thought step by step. The goal is to see it more objectively, not to ignore it.',
       ),
       ExerciseStep(
-        title: 'Write the thought',
-        body: 'What stressful thought is bothering you right now?',
+        title: 'What happened?',
+        body: 'What happened that made you feel stressed?',
+        voiceText:
+            'What happened that made you feel stressed? Describe the situation as if you were explaining it to someone who was not there. Focus on what happened, not on what it means about you.',
         hasInput: true,
-        inputHint: 'e.g. "I won’t succeed at work..."',
+        inputHint: 'Describe the situation as if explaining to someone who was not there',
       ),
       ExerciseStep(
-        title: 'Question it',
+        title: 'What thought?',
+        body: 'What thought immediately came to your mind?',
+        voiceText:
+            'What thought immediately came to your mind? Write the first thought exactly as it appeared in your mind, even if it feels exaggerated or emotional.',
+        hasInput: true,
+        inputHint: 'Write the first thought exactly as it appeared',
+      ),
+      ExerciseStep(
+        title: 'Evidence — For / Against',
         body:
-            'Is this thought based on facts or fear? What would you say to a friend who had it?',
+            'What facts support this thought and what facts may not fully support it?',
+        voiceText:
+            'Now look for evidence. List facts that support the thought, and separately list facts that do not fully support it. Focus on observations and experiences rather than feelings.',
         hasInput: true,
-        inputHint: 'The evidence shows that...',
+        inputHint: 'Use the FOR and AGAINST fields below',
+      ),
+      ExerciseStep(
+        title: 'What would you tell a friend?',
+        body:
+            'If a friend had this thought, what would you tell them?',
+        voiceText:
+            'If a friend had this thought, what would you tell them? Imagine someone you care about and write what you would honestly say to help them think more fairly.',
+        hasInput: true,
+        inputHint: 'Imagine someone you care about and write your honest reply',
       ),
       ExerciseStep(
         title: 'Balanced thought',
         body:
-            'Write a more balanced version of the original thought. It doesn’t need to be positive — just realistic.',
+            'Based on what you wrote, what is a more balanced and realistic way to think about this situation?',
+        voiceText:
+            'Based on what you wrote, try to rewrite your original thought in a more balanced and realistic way. Aim for a thought that feels fair and believable.',
         hasInput: true,
-        inputHint: 'A more balanced thought could be...',
+        inputHint: 'Rewrite your original thought using the full picture you explored',
       ),
     ],
   ),

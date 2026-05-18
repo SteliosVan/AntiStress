@@ -5,6 +5,13 @@ allprojects {
     }
 }
 
+// Force a minimum desugar_jdk_libs version required by some AARs
+configurations.all {
+    resolutionStrategy {
+        force 'com.android.tools:desugar_jdk_libs:1.2.2'
+    }
+}
+
 rootProject.buildDir = "../build"
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"

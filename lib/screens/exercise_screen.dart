@@ -24,6 +24,9 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   int _durationMinutes = 0;
   int _groundingSubStep = 0;
   final Map<int, String> _inputs = {};
+  final TextEditingController _textController = TextEditingController();
+  final TextEditingController _forController = TextEditingController();
+  final TextEditingController _againstController = TextEditingController();
   late FlutterTts _flutterTts;
 
   static const List<Map<String, String>> _groundingSubSteps = [
@@ -66,11 +69,34 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     _initTts();
   }
 
+  void _resetControllers() {
+    _textController.clear();
+    _forController.clear();
+    _againstController.clear();
+  }
+
   Future<void> _loadDuration() async {
     final prefs = await SharedPreferences.getInstance();
     final saved = prefs.getDouble('duration_${widget.exercise.id}');
+    double estimate;
+    switch (widget.exercise.id) {
+      case 'cbt':
+        estimate = 10.0;
+        break;
+      case 'grounding':
+        estimate = 5.0;
+        break;
+      case 'pmt':
+        estimate = 3.0;
+        break;
+      case '478':
+      case 'box':
+      default:
+        estimate = widget.exercise.durationMinutes.toDouble();
+    }
+
     setState(() {
-      _durationMinutes = (saved ?? widget.exercise.durationMinutes.toDouble()).toInt();
+      _durationMinutes = (saved ?? estimate).toInt();
     });
   }
 
@@ -164,6 +190,8 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
 
     if (_step < widget.exercise.steps.length - 1) {
       setState(() => _step++);
+      // clear input widgets for the new step so the editor appears empty
+      _resetControllers();
       _speakCurrentStep();
     } else {
       _completeSession();
@@ -173,6 +201,9 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   @override
   void dispose() {
     _flutterTts.stop();
+    _textController.dispose();
+    _forController.dispose();
+    _againstController.dispose();
     super.dispose();
   }
 
@@ -356,13 +387,15 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                       ],
 
                       if (step.hasBreathAnimation) ...[
-                        BreathAnimationWidget(
-                          exerciseId: widget.exercise.id,
-                          maxCycles: _computedCyclesForStep(
-                            _durationMinutes,
-                            step.breathDurationSeconds,
+                        Center(
+                          child: BreathAnimationWidget(
+                            exerciseId: widget.exercise.id,
+                            maxCycles: _computedCyclesForStep(
+                              _durationMinutes,
+                              step.breathDurationSeconds,
+                            ),
+                            onComplete: () {},
                           ),
-                          onComplete: () {},
                         ),
                       ],
 
@@ -374,39 +407,130 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                       ],
 
                       if (step.hasInput) ...[
-                        TextField(
-                          maxLines: 4,
-                          onChanged: (v) => _inputs[_step] = v,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(color: AppTheme.textPrimary),
-                          decoration: InputDecoration(
-                            hintText: step.inputHint,
-                            hintStyle: Theme.of(context)
+                        // Special CBT handling: multi-step text inputs with validation
+                        if (widget.exercise.id == 'cbt' && _step > 0) ...[
+                          if (_step == 3) ...[
+                            // Evidence step: split FOR / AGAINST
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: AppTheme.surface,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: AppTheme.cardBorder, width: 0.5),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('FOR', style: Theme.of(context).textTheme.labelSmall),
+                                  const SizedBox(height: 8),
+                                  TextField(
+                                    controller: _forController,
+                                    maxLines: 5,
+                                    onChanged: (v) => setState(() => _inputs[_step * 10 + 1] = v),
+                                    decoration: InputDecoration(
+                                      hintText: 'List facts that support the thought (one per line)',
+                                      filled: true,
+                                      fillColor: AppTheme.surface,
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: const BorderSide(color: AppTheme.cardBorder, width: 0.5),
+                                      ),
+                                      contentPadding: const EdgeInsets.all(12),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text('AGAINST', style: Theme.of(context).textTheme.labelSmall),
+                                  const SizedBox(height: 8),
+                                  TextField(
+                                    controller: _againstController,
+                                    maxLines: 5,
+                                    onChanged: (v) => setState(() => _inputs[_step * 10 + 2] = v),
+                                    decoration: InputDecoration(
+                                      hintText: 'List facts that do not fully fit the thought (one per line)',
+                                      filled: true,
+                                      fillColor: AppTheme.surface,
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: const BorderSide(color: AppTheme.cardBorder, width: 0.5),
+                                      ),
+                                      contentPadding: const EdgeInsets.all(12),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ] else ...[
+                            TextField(
+                              controller: _textController,
+                              maxLines: 5,
+                              onChanged: (v) => setState(() => _inputs[_step] = v),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(color: AppTheme.textPrimary),
+                              decoration: InputDecoration(
+                                hintText: step.inputHint,
+                                hintStyle: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(color: AppTheme.textTertiary),
+                                filled: true,
+                                fillColor: AppTheme.surface,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                      color: AppTheme.cardBorder, width: 0.5),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                      color: AppTheme.cardBorder, width: 0.5),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                      color: AppTheme.primary, width: 1.5),
+                                ),
+                                contentPadding: const EdgeInsets.all(14),
+                              ),
+                            ),
+                          ],
+                        ] else ...[
+                          // non-CBT generic input
+                          TextField(
+                            maxLines: 4,
+                            onChanged: (v) => setState(() => _inputs[_step] = v),
+                            style: Theme.of(context)
                                 .textTheme
-                                .bodyMedium
-                                ?.copyWith(color: AppTheme.textTertiary),
-                            filled: true,
-                            fillColor: AppTheme.surface,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                  color: AppTheme.cardBorder, width: 0.5),
+                                .bodyLarge
+                                ?.copyWith(color: AppTheme.textPrimary),
+                            decoration: InputDecoration(
+                              hintText: step.inputHint,
+                              hintStyle: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(color: AppTheme.textTertiary),
+                              filled: true,
+                              fillColor: AppTheme.surface,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                    color: AppTheme.cardBorder, width: 0.5),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                    color: AppTheme.cardBorder, width: 0.5),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                    color: AppTheme.primary, width: 1.5),
+                              ),
+                              contentPadding: const EdgeInsets.all(14),
                             ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                  color: AppTheme.cardBorder, width: 0.5),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                  color: AppTheme.primary, width: 1.5),
-                            ),
-                            contentPadding: const EdgeInsets.all(14),
                           ),
-                        ),
+                        ],
                       ],
                     ],
                   ],
@@ -421,31 +545,44 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
             if (isFirst || isLast || isStepExercise)
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: !isLast ? _next : _completeSession,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14)),
-                      elevation: 0,
+                child: Builder(builder: (ctx) {
+                  // compute whether the button should be enabled (CBT steps require non-empty input)
+                  bool buttonEnabled = true;
+                    if (!isFirst && !isLast && widget.exercise.id == 'cbt') {
+                    if (_step == 3) {
+                      // require BOTH FOR and AGAINST to be non-empty before continuing
+                      buttonEnabled = _forController.text.trim().isNotEmpty && _againstController.text.trim().isNotEmpty;
+                    } else {
+                      buttonEnabled = _textController.text.trim().isNotEmpty;
+                    }
+                  }
+
+                  return SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: buttonEnabled ? (!isLast ? _next : _completeSession) : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14)),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        isFirst
+                            ? 'Start →'
+                            : isLast
+                                ? 'Complete & Review →'
+                                : isStepExercise
+                                    ? 'Continue →'
+                                    : 'Next →',
+                        style: const TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w500),
+                      ),
                     ),
-                    child: Text(
-                      isFirst
-                          ? 'Start →'
-                          : isLast
-                              ? 'Complete & Review →'
-                              : isStepExercise
-                                  ? 'Continue →'
-                                  : 'Next →',
-                      style: const TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                ),
+                  );
+                }),
               ),
           ],
         ),
