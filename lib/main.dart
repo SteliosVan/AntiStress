@@ -5,6 +5,7 @@ import 'screens/home_screen.dart';
 import 'screens/progress_screen.dart';
 import 'screens/settings_screen.dart';
 import 'services/background_audio_service.dart';
+import 'services/notification_service.dart';
 
 import 'theme.dart';
 
@@ -53,6 +54,9 @@ class _MainShellState extends State<MainShell> {
     super.initState();
     BackgroundAudioService.instance.init().catchError((error) {
       // If audio service fails to initialize, keep the UI responsive.
+    });
+    NotificationService.instance.init().catchError((error) {
+      // If notification service fails to initialize, keep the UI responsive.
     });
   }
 

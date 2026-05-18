@@ -49,13 +49,19 @@ class BackgroundAudioService {
 
     try {
       if (enabled) {
-        await player.setAsset('MindPause_backround_music.mp3');
-        await player.setLoopMode(LoopMode.one);
-        await player.setVolume(0.7);
-        await player.play();
+        if (player.playing) {
+          await player.setVolume(0.7);
+        } else {
+          await player.setAsset('MindPause_backround_music.mp3');
+          await player.setLoopMode(LoopMode.one);
+          await player.setVolume(0.7);
+          await player.play();
+        }
       } else {
         await player.setVolume(0);
+        await player.pause();
         await player.stop();
+        await player.seek(Duration.zero);
       }
     } catch (_) {
       // Ignore player state errors.
